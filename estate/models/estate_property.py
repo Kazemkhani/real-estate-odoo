@@ -9,6 +9,7 @@ class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Properties"
     _order = "id desc"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # --- Basic fields ---
     name = fields.Char(required=True)
@@ -19,7 +20,7 @@ class EstateProperty(models.Model):
         default=lambda self: fields.Date.today() + relativedelta(months=3),
     )
     expected_price = fields.Float(required=True)
-    selling_price = fields.Float(readonly=True, copy=False)
+    selling_price = fields.Float(readonly=True, copy=False, tracking=True)
     bedrooms = fields.Integer(default=2)
     living_area = fields.Integer()
     facades = fields.Integer()
@@ -41,15 +42,22 @@ class EstateProperty(models.Model):
         required=True,
         copy=False,
         default="new",
+        tracking=True,
     )
 
     # --- Relations ---
     property_type_id = fields.Many2one("estate.property.type", string="Property Type")
-    buyer_id = fields.Many2one("res.partner", string="Buyer", copy=False)
+    buyer_id = fields.Many2one("res.partner", string="Buyer", copy=False, tracking=True)
     salesperson_id = fields.Many2one("res.users", string="Real Estate Agent", default=lambda self: self.env.user)
     tag_ids = fields.Many2many("estate.property.tag")
     amenity_ids = fields.Many2many("estate.property.amenity", string="Amenities")
     offer_ids = fields.One2many("estate.property.offer", "property_id")
+
+    # --- Location ---
+    country_id = fields.Many2one("res.country", string="Country")
+    # Relay the flag URL so the kanban widget="image_url" can render it directly.
+    # Pattern taken verbatim from website.visitor (Odoo 19 core).
+    country_flag = fields.Char(related="country_id.image_url", string="Country Flag")
 
     # --- Image + currency (currency lets prices render with the monetary widget) ---
     image = fields.Image("Property Image", max_width=1920, max_height=1920)
@@ -105,6 +113,11 @@ class EstateProperty(models.Model):
             if record.state == "cancelled":
                 raise UserError("Cancelled properties cannot be sold.")
             record.state = "sold"
+            record.message_post(
+                body="Property marked as <b>Sold</b>.",
+                message_type="comment",
+                subtype_xmlid="mail.mt_note",
+            )
         return True
 
     def cancel_property(self):
@@ -134,6 +147,19 @@ class EstateProperty(models.Model):
         for record in self:
             if record.state not in ("new", "cancelled"):
                 raise UserError("Only New or Cancelled properties can be deleted.")
+
+
+    # --- Wizard: open "Make an Offer" dialog pre-filled with this property ---
+    def action_make_offer(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Make an Offer",
+            "res_model": "estate.make.offer.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_property_id": self.id},
+        }
 
     # --- Smart button: jump to this property's offers ---
     def action_view_offers(self):

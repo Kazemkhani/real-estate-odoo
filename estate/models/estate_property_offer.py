@@ -1,7 +1,11 @@
+import logging
+
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class EstatePropertyOffer(models.Model):
@@ -69,3 +73,24 @@ class EstatePropertyOffer(models.Model):
         for record in self:
             record.state = "refused"
         return True
+
+    @api.model
+    def _cron_expire_offers(self):
+        """Scheduled action: mark pending offers whose deadline has passed as refused.
+
+        'Pending' means state is False/None (never set — neither accepted nor refused).
+        Offers that are already accepted or refused are left untouched.
+        """
+        today = fields.Date.today()
+        expired = self.search([
+            ("state", "=", False),
+            ("date_deadline", "<", today),
+        ])
+        if expired:
+            expired.write({"state": "refused"})
+            _logger.info(
+                "estate.property.offer._cron_expire_offers: "
+                "expired %d offer(s) with ids %s",
+                len(expired),
+                expired.ids,
+            )

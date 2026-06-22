@@ -36,6 +36,9 @@
                 <header>
                     <button name="sell_property" type="object" string="Sell"
                             invisible="state in ('sold', 'cancelled')"/>
+                    <button name="action_make_offer" type="object" string="Make an Offer"
+                            class="btn-secondary"
+                            invisible="state in ('sold', 'cancelled')"/>
                     <button name="cancel_property" type="object" string="Cancel"
                             invisible="state in ('sold', 'cancelled')"/>
                     <field name="state" widget="statusbar"
@@ -90,9 +93,19 @@
                                 <field name="salesperson_id"/>
                                 <field name="buyer_id"/>
                             </group>
+                            <group string="Location">
+                                <!-- country_flag is a Char(related="country_id.image_url").
+                                     widget="image_url" renders it as an <img>.
+                                     Pattern from website.visitor form (Odoo 19 core). -->
+                                <div class="float-end" invisible="not country_id">
+                                    <field name="country_flag" widget="image_url" options='{"size": [32, 32]}'/>
+                                </div>
+                                <field name="country_id"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -107,6 +120,7 @@
                 <field name="postcode"/>
                 <field name="property_type_id"/>
                 <field name="bedrooms"/>
+                <field name="country_id"/>
                 <filter name="available" string="Available"
                         domain="[('state', 'in', ['new', 'offer_received'])]"/>
                 <group>
@@ -114,6 +128,8 @@
                             context="{'group_by': 'property_type_id'}"/>
                     <filter name="group_state" string="Status"
                             context="{'group_by': 'state'}"/>
+                    <filter name="group_country" string="Country"
+                            context="{'group_by': 'country_id'}"/>
                 </group>
             </search>
         </field>
@@ -124,9 +140,16 @@
         <field name="name">estate.property.kanban</field>
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="property_type_id" sample="1">
+            <!-- class="o_estate_kanban" is the scope anchor for estate_kanban.scss -->
+            <kanban default_group_by="property_type_id" sample="1" class="o_estate_kanban">
                 <field name="state"/>
                 <field name="currency_id"/>
+                <!-- Declare country_id and country_flag so they are fetched in the
+                     kanban RPC. country_flag is a related Char(country_id.image_url);
+                     widget="image_url" renders a Char URL as a real <img> tag.
+                     Pattern from website.visitor kanban (Odoo 19 core). -->
+                <field name="country_id"/>
+                <field name="country_flag"/>
                 <templates>
                     <t t-name="card" class="flex-row">
                         <aside class="d-flex align-items-center me-2">
@@ -139,15 +162,22 @@
                                     invisible="state != 'cancelled'"/>
                             <field name="name" class="fw-bold fs-5"/>
                             <field name="property_type_id" class="text-muted"/>
-                            <div class="d-flex gap-2">
+                            <div class="o_estate_price_expected d-flex gap-2">
                                 <span class="text-muted">Expected:</span>
                                 <field name="expected_price" widget="monetary"/>
                             </div>
-                            <div class="d-flex gap-2" invisible="not selling_price">
+                            <div class="o_estate_price_selling d-flex gap-2" invisible="not selling_price">
                                 <span class="text-muted">Selling:</span>
                                 <field name="selling_price" widget="monetary"/>
                             </div>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <!-- Country flag row: hidden when no country set.
+                                 Guards on both country_id AND country_flag to match
+                                 Odoo 19 core (website.visitor kanban) sample-data safety. -->
+                            <div class="o_estate_country_flag" invisible="not country_id">
+                                <field name="country_flag" widget="image_url" options='{"size": [18, 18]}'/>
+                                <field name="country_id" readonly="1"/>
+                            </div>
                             <footer class="pt-1">
                                 <field name="state" widget="badge"
                                        decoration-info="state == 'new'"

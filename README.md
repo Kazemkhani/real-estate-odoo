@@ -55,6 +55,12 @@ It is built as **two modules**:
 - 📄 QWeb **PDF “Property Sheet”** in the Print menu
 - 🌱 Sample data (properties in multiple states, 3 types, tags, **28 amenities**)
 
+**Advanced (Odoo 19 power features)**
+- 💬 **Chatter, activities & field-tracking** (`mail.thread`) — messaging, scheduled follow-ups, and an audit trail on state / selling-price / buyer changes
+- ⏰ **Scheduled automation** (`ir.cron`) — auto-expires offers past their deadline
+- 🧙 **Wizard** (`TransientModel`) — a “Make an Offer” dialog launched from the property form
+- 🎨 **Custom SCSS** kanban polish (card elevation, state-accent borders) + a `country_id` with flag
+
 ---
 
 ## 📸 Screenshots
@@ -66,6 +72,8 @@ It is built as **two modules**:
 | ![Analytics](docs/screenshots/analytics.png) | ![Invoices](docs/screenshots/invoices.png) |
 | **Offers & negotiation** | **Validation** |
 | ![Offers](docs/screenshots/offers.png) | ![Constraint](docs/screenshots/constraint.png) |
+| **Chatter & activities** | **Amenities catalogue** |
+| ![Chatter](docs/screenshots/chatter.png) | ![Amenities](docs/screenshots/amenities.png) |
 
 ▶️ Full demo video: [`docs/demo.mp4`](docs/demo.mp4)
 
