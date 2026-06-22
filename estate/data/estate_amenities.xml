@@ -1,0 +1,39 @@
+<odoo>
+    <data noupdate="1">
+        <!-- ===== Indoor / Unit ===== -->
+        <record id="amenity_central_ac" model="estate.property.amenity"><field name="name">Central A/C</field><field name="category">indoor</field></record>
+        <record id="amenity_balcony" model="estate.property.amenity"><field name="name">Balcony</field><field name="category">indoor</field></record>
+        <record id="amenity_wardrobes" model="estate.property.amenity"><field name="name">Built-in Wardrobes</field><field name="category">indoor</field></record>
+        <record id="amenity_walkin_closet" model="estate.property.amenity"><field name="name">Walk-in Closet</field><field name="category">indoor</field></record>
+        <record id="amenity_kitchen_appliances" model="estate.property.amenity"><field name="name">Kitchen Appliances</field><field name="category">indoor</field></record>
+        <record id="amenity_maids_room" model="estate.property.amenity"><field name="name">Maids Room</field><field name="category">indoor</field></record>
+        <record id="amenity_study" model="estate.property.amenity"><field name="name">Study</field><field name="category">indoor</field></record>
+        <record id="amenity_private_garden" model="estate.property.amenity"><field name="name">Private Garden</field><field name="category">indoor</field></record>
+        <record id="amenity_private_pool" model="estate.property.amenity"><field name="name">Private Pool</field><field name="category">indoor</field></record>
+        <record id="amenity_private_gym" model="estate.property.amenity"><field name="name">Private Gym</field><field name="category">indoor</field></record>
+        <record id="amenity_private_jacuzzi" model="estate.property.amenity"><field name="name">Private Jacuzzi</field><field name="category">indoor</field></record>
+        <record id="amenity_pets_allowed" model="estate.property.amenity"><field name="name">Pets Allowed</field><field name="category">indoor</field></record>
+
+        <!-- ===== Building / Shared ===== -->
+        <record id="amenity_shared_pool" model="estate.property.amenity"><field name="name">Shared Pool</field><field name="category">shared</field></record>
+        <record id="amenity_shared_gym" model="estate.property.amenity"><field name="name">Shared Gym</field><field name="category">shared</field></record>
+        <record id="amenity_shared_spa" model="estate.property.amenity"><field name="name">Shared Spa</field><field name="category">shared</field></record>
+        <record id="amenity_covered_parking" model="estate.property.amenity"><field name="name">Covered Parking</field><field name="category">shared</field></record>
+        <record id="amenity_security" model="estate.property.amenity"><field name="name">24/7 Security</field><field name="category">shared</field></record>
+        <record id="amenity_concierge" model="estate.property.amenity"><field name="name">Concierge Service</field><field name="category">shared</field></record>
+        <record id="amenity_maid_service" model="estate.property.amenity"><field name="name">Maid Service</field><field name="category">shared</field></record>
+        <record id="amenity_play_area" model="estate.property.amenity"><field name="name">Children's Play Area</field><field name="category">shared</field></record>
+        <record id="amenity_bbq" model="estate.property.amenity"><field name="name">Barbecue Area</field><field name="category">shared</field></record>
+        <record id="amenity_lobby" model="estate.property.amenity"><field name="name">Lobby in Building</field><field name="category">shared</field></record>
+        <record id="amenity_conference" model="estate.property.amenity"><field name="name">Conference Room</field><field name="category">shared</field></record>
+        <record id="amenity_sauna" model="estate.property.amenity"><field name="name">Sauna</field><field name="category">shared</field></record>
+
+        <!-- ===== View ===== -->
+        <record id="amenity_view_water" model="estate.property.amenity"><field name="name">View of Water</field><field name="category">view</field></record>
+        <record id="amenity_view_landmark" model="estate.property.amenity"><field name="name">View of Landmark</field><field name="category">view</field></record>
+
+        <!-- ===== Other ===== -->
+        <record id="amenity_vastu" model="estate.property.amenity"><field name="name">Vastu-compliant</field><field name="category">other</field></record>
+        <record id="amenity_networked" model="estate.property.amenity"><field name="name">Networked</field><field name="category">other</field></record>
+    </data>
+</odoo>
