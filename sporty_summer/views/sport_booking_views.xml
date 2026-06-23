@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sport_booking_action" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">sport.booking</field>
+        <field name="view_mode">calendar,list,kanban,form,graph,pivot</field>
+        <field name="context">{'search_default_group_court': 1}</field>
+    </record>
+
+    <!-- LIST -->
+    <record id="sport_booking_view_list" model="ir.ui.view">
+        <field name="name">sport.booking.list</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'confirmed'"
+                  decoration-success="state == 'paid'"
+                  decoration-muted="state in ('done', 'cancelled')"
+                  decoration-bf="state == 'paid'">
+                <field name="name"/>
+                <field name="court_id"/>
+                <field name="sport_type_id"/>
+                <field name="customer_id"/>
+                <field name="start_datetime"/>
+                <field name="duration"/>
+                <field name="participant_count"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'confirmed'"
+                       decoration-success="state == 'paid'"
+                       decoration-warning="state == 'done'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORM -->
+    <record id="sport_booking_view_form" model="ir.ui.view">
+        <field name="name">sport.booking.form</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_mark_paid" type="object" string="Register Payment"
+                            class="btn-primary" invisible="state not in ('draft', 'confirmed')"/>
+                    <button name="action_play" type="object" string="Mark as Played"
+                            invisible="state != 'paid'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,paid,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger"
+                            invisible="state != 'cancelled'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="court_id"/>
+                            <field name="sport_type_id"/>
+                            <field name="customer_id"/>
+                            <field name="participant_count"/>
+                            <label for="max_participants" string="Capacity"/>
+                            <div><field name="max_participants" class="oe_inline" readonly="1"/> players max</div>
+                        </group>
+                        <group>
+                            <field name="start_datetime"/>
+                            <field name="end_datetime"/>
+                            <field name="duration"/>
+                            <field name="unit_price" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Pricing">
+                        <group>
+                            <field name="amount_untaxed" widget="monetary"/>
+                            <field name="loyalty_discount"/>
+                            <field name="discount_amount" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Equipment">
+                            <field name="equipment_loan_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="equipment_id"/>
+                                    <field name="quantity"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- CALENDAR: real-time court schedule -->
+    <record id="sport_booking_view_calendar" model="ir.ui.view">
+        <field name="name">sport.booking.calendar</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Court Schedule" date_start="start_datetime" date_stop="end_datetime"
+                      color="court_id" mode="week">
+                <field name="court_id" filters="1"/>
+                <field name="customer_id"/>
+                <field name="sport_type_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- KANBAN: pipeline by state -->
+    <record id="sport_booking_view_kanban" model="ir.ui.view">
+        <field name="name">sport.booking.kanban</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_sporty_kanban" sample="1">
+                <field name="state"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold fs-6"><field name="name"/></div>
+                        <field name="court_id"/>
+                        <div class="text-muted"><field name="customer_id"/></div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span><i class="fa fa-clock-o me-1"/><field name="start_datetime"/></span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span><i class="fa fa-users me-1"/><field name="participant_count"/></span>
+                            <field name="amount_total" widget="monetary" class="fw-bold"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- SEARCH -->
+    <record id="sport_booking_view_search" model="ir.ui.view">
+        <field name="name">sport.booking.search</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="court_id"/>
+                <field name="customer_id"/>
+                <field name="sport_type_id"/>
+                <filter name="upcoming" string="Upcoming"
+                        domain="[('start_datetime', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="unpaid" string="Awaiting Payment"
+                        domain="[('state', 'in', ['draft', 'confirmed'])]"/>
+                <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group>
+                    <filter name="group_court" string="Court" context="{'group_by': 'court_id'}"/>
+                    <filter name="group_sport" string="Sport" context="{'group_by': 'sport_type_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_customer" string="Customer" context="{'group_by': 'customer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- GRAPH: revenue / utilisation -->
+    <record id="sport_booking_view_graph" model="ir.ui.view">
+        <field name="name">sport.booking.graph</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <graph string="Bookings" sample="1">
+                <field name="sport_type_id"/>
+                <field name="amount_total" type="measure"/>
+                <field name="duration" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- PIVOT -->
+    <record id="sport_booking_view_pivot" model="ir.ui.view">
+        <field name="name">sport.booking.pivot</field>
+        <field name="model">sport.booking</field>
+        <field name="arch" type="xml">
+            <pivot string="Bookings" sample="1">
+                <field name="court_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

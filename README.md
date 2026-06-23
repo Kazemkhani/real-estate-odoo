@@ -32,6 +32,13 @@ It is built as **two modules**:
 | [`estate`](estate/) | The core domain — properties, types, tags, amenities, offers, views, security, reporting |
 | [`estate_accounts`](estate_accounts/) | Thin bridge that bills the buyer (creates an invoice) when a property is sold |
 
+> 🏟️ **Bootcamp case study:** this repo also ships [`sporty_summer`](sporty_summer/) — a full
+> **Sports Facility Management ERP** for the *Sporty Summer DXB* advanced case study
+> (court bookings with double-booking prevention, per-sport capacity limits, payment-gated
+> participation, first-come coaching registration, equipment loan/loss tracking, loyalty
+> discounts, calendar + pivot analytics, and a 20-case test suite). See its
+> [README](sporty_summer/README.md) for the requirement-by-requirement mapping.
+
 ---
 
 ## 🎯 Features

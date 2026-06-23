@@ -1,0 +1,15 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_sport_type_staff,sport.type.staff,model_sport_type,group_sporty_staff,1,0,0,0
+access_sport_type_manager,sport.type.manager,model_sport_type,group_sporty_manager,1,1,1,1
+access_sport_court_staff,sport.court.staff,model_sport_court,group_sporty_staff,1,0,0,0
+access_sport_court_manager,sport.court.manager,model_sport_court,group_sporty_manager,1,1,1,1
+access_sport_booking_staff,sport.booking.staff,model_sport_booking,group_sporty_staff,1,1,1,0
+access_sport_booking_manager,sport.booking.manager,model_sport_booking,group_sporty_manager,1,1,1,1
+access_sport_coaching_class_staff,sport.coaching.class.staff,model_sport_coaching_class,group_sporty_staff,1,1,1,0
+access_sport_coaching_class_manager,sport.coaching.class.manager,model_sport_coaching_class,group_sporty_manager,1,1,1,1
+access_sport_class_registration_staff,sport.class.registration.staff,model_sport_class_registration,group_sporty_staff,1,1,1,1
+access_sport_class_registration_manager,sport.class.registration.manager,model_sport_class_registration,group_sporty_manager,1,1,1,1
+access_sport_equipment_staff,sport.equipment.staff,model_sport_equipment,group_sporty_staff,1,1,0,0
+access_sport_equipment_manager,sport.equipment.manager,model_sport_equipment,group_sporty_manager,1,1,1,1
+access_sport_equipment_loan_staff,sport.equipment.loan.staff,model_sport_equipment_loan,group_sporty_staff,1,1,1,0
+access_sport_equipment_loan_manager,sport.equipment.loan.manager,model_sport_equipment_loan,group_sporty_manager,1,1,1,1

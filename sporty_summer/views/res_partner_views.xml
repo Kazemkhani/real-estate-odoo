@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add a Sporty Summer tab to the contact form: coach flag + loyalty status -->
+    <record id="sporty_res_partner_view_form" model="ir.ui.view">
+        <field name="name">res.partner.form.sporty</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Sporty Summer" name="sporty">
+                    <group>
+                        <group string="Profile">
+                            <field name="is_coach"/>
+                        </group>
+                        <group string="Loyalty">
+                            <field name="booking_count"/>
+                            <field name="is_frequent_visitor"/>
+                            <field name="loyalty_discount"/>
+                        </group>
+                    </group>
+                    <field name="booking_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="court_id"/>
+                            <field name="start_datetime"/>
+                            <field name="amount_total" widget="monetary"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

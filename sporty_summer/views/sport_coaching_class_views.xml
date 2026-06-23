@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sport_coaching_class_action" model="ir.actions.act_window">
+        <field name="name">Coaching Classes</field>
+        <field name="res_model">sport.coaching.class</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <record id="sport_coaching_class_view_list" model="ir.ui.view">
+        <field name="name">sport.coaching.class.list</field>
+        <field name="model">sport.coaching.class</field>
+        <field name="arch" type="xml">
+            <list decoration-success="seats_available > 0 and state == 'open'"
+                  decoration-danger="is_full"
+                  decoration-muted="state in ('closed', 'cancelled')">
+                <field name="name"/>
+                <field name="sport_type_id"/>
+                <field name="coach_id"/>
+                <field name="start_date"/>
+                <field name="seats_taken"/>
+                <field name="capacity"/>
+                <field name="seats_available"/>
+                <field name="is_full" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="sport_coaching_class_view_kanban" model="ir.ui.view">
+        <field name="name">sport.coaching.class.kanban</field>
+        <field name="model">sport.coaching.class</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <field name="is_full"/>
+                <templates>
+                    <t t-name="card">
+                        <widget name="web_ribbon" title="Full" bg_color="text-bg-danger"
+                                invisible="not is_full"/>
+                        <div class="fw-bold fs-5"><field name="name"/></div>
+                        <field name="sport_type_id" class="text-muted"/>
+                        <div class="mt-1"><i class="fa fa-user me-1"/><field name="coach_id"/></div>
+                        <div class="mt-1"><i class="fa fa-calendar me-1"/><field name="schedule"/></div>
+                        <div class="mt-2">
+                            <span class="badge text-bg-info">
+                                <field name="seats_taken"/> / <field name="capacity"/> seats
+                            </span>
+                            <span class="badge text-bg-success" invisible="is_full">
+                                <field name="seats_available"/> left
+                            </span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="sport_coaching_class_view_form" model="ir.ui.view">
+        <field name="name">sport.coaching.class.form</field>
+        <field name="model">sport.coaching.class</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open" type="object" string="Open Registrations"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'open'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,closed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Full" bg_color="text-bg-danger"
+                            invisible="not is_full"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Junior Tennis Camp"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sport_type_id"/>
+                            <field name="coach_id"/>
+                            <field name="schedule"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="price" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="capacity"/>
+                            <field name="seats_taken"/>
+                            <field name="seats_available"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Registrations">
+                            <field name="registration_ids">
+                                <list editable="bottom">
+                                    <field name="name" readonly="1"/>
+                                    <field name="customer_id"/>
+                                    <field name="registration_date"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+</odoo>
