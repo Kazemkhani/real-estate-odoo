@@ -126,6 +126,18 @@ cp -R estate estate_accounts /path/to/your/addons/
 
 Then enable Developer Mode to explore the Graph/Pivot views and the PDF report.
 
+### 🐳 One-command Docker run / public demo link
+
+Prefer not to install Odoo by hand? A ready-to-run Docker stack lives in
+[`deploy/`](deploy/):
+
+```bash
+docker compose -f deploy/docker-compose.yml up -d   # then open http://localhost:8069
+```
+
+See [`deploy/README.md`](deploy/README.md) for the full walkthrough, including how to
+publish a **free public HTTPS link** (via a Cloudflare tunnel) or host it always-on.
+
 ---
 
 ## 🗂️ Project structure
