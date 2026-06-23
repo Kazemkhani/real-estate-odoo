@@ -27,6 +27,11 @@ class EstatePropertyOffer(models.Model):
         string="Deadline",
         compute="_compute_date_deadline",
         inverse="_inverse_date_deadline",
+        # store=True is required: the _cron_expire_offers scheduled action below
+        # filters offers with search([("date_deadline", "<", today)]). A non-stored
+        # computed field has no SQL column, so Odoo raises when you search on it.
+        # Storing it also lets the deadline be sorted/grouped in list & search views.
+        store=True,
     )
 
     # SQL constraint (Odoo 19): the offer price must be positive
@@ -67,6 +72,13 @@ class EstatePropertyOffer(models.Model):
                 record.property_id.buyer_id = record.partner_id
                 record.property_id.state = "offer_accepted"
                 record.property_id.selling_price = record.price
+                # Accepting one offer locks the deal, so auto-refuse every other
+                # pending offer on the same property (an accepted offer can't
+                # coexist with live competing bids).
+                other_offers = record.property_id.offer_ids - record
+                other_offers.filtered(
+                    lambda o: o.state != "accepted"
+                ).write({"state": "refused"})
         return True
 
     def refuse_offer(self):

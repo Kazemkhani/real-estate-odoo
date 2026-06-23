@@ -11,6 +11,8 @@
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 16"/>
   <img src="https://img.shields.io/badge/License-LGPL--3.0-blue" alt="License LGPL-3.0"/>
   <img src="https://img.shields.io/badge/status-demo--ready-1f9d57" alt="Demo ready"/>
+  <img src="https://img.shields.io/badge/tests-22%20cases-success" alt="Tested"/>
+  <img src="https://img.shields.io/badge/CI-static%20checks-blue?logo=githubactions&logoColor=white" alt="CI"/>
 </p>
 
 <p align="center">
@@ -141,6 +143,37 @@ real-estate-odoo/
 **Odoo 19.0** · **Python 3.12** · **PostgreSQL 16** · QWeb · Owl/Kanban
 
 Demonstrates: ORM models & relations, computed/related fields, `@api.depends` / `@api.onchange` / `@api.constrains`, `models.Constraint`, action methods, view inheritance (`xpath`), cross-module model inheritance, record rules & groups, and QWeb reporting.
+
+---
+
+## ✅ Tests & CI
+
+The module ships with an automated test suite written with Odoo's
+`TransactionCase` (and `AccountTestInvoicingCommon` for the billing bridge),
+so the business rules are verified, not just demoed:
+
+| Suite | Covers |
+|---|---|
+| `estate/tests/test_estate_property.py` | computed areas & best price, the New→Sold state machine, the 90%-of-expected selling-price constraint, and the delete guard |
+| `estate/tests/test_estate_property_offer.py` | offer → *Offer Received*, **accept locks price/buyer + auto-refuses rivals**, accept/refuse guards, deadline compute↔validity inverse, and the **expiry cron** |
+| `estate/tests/test_estate_make_offer_wizard.py` | the *Make an Offer* wizard creates a valid offer and rejects non-positive prices |
+| `estate_accounts/tests/test_estate_accounts.py` | selling a property raises one customer invoice (6% commission + admin fee), and bills nothing when there is no buyer |
+
+```bash
+# Run the suite against a test database
+./odoo-bin -c odoo.conf -d test_db -i estate,estate_accounts \
+           --test-enable --stop-after-init
+```
+
+A lightweight **GitHub Actions** workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+runs on every push: it byte-compiles all Python, validates that every XML view
+is well-formed, and checks the module manifests parse — catching broken views or
+syntax slips before they ever reach Odoo.
+
+> While writing the tests I also fixed two issues: the offer-expiry **cron searched a
+> non-stored computed field** (`date_deadline`) and would have crashed — now stored and
+> covered by a regression test — and **accepting an offer now auto-refuses the competing
+> offers**, matching the documented behaviour.
 
 ---
 
