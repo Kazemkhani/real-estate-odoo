@@ -4,14 +4,14 @@
     'category': 'Services/Sports',
     'summary': "Sports facility management: court bookings, coaching classes, equipment loans, loyalty",
     'description': """
-        Sports Facility Management ERP for Sporty Summer DXB (Summer 2026).
+Sports Facility Management ERP for Sporty Summer DXB (Summer 2026).
 
-        Centralises court availability and bookings (with double-booking
-        prevention and per-sport participant limits), payment tracking that
-        gates participation, first-come-first-served coaching-class registration,
-        equipment loan / return / loss tracking, and loyalty discounts for
-        frequent visitors — plus calendar, kanban and pivot analytics.
-    """,
+Centralises court availability and bookings (with double-booking prevention and
+per-sport participant limits), payment tracking that gates participation,
+first-come-first-served coaching-class registration, equipment loan / return /
+loss tracking, and loyalty discounts for frequent visitors — plus calendar,
+kanban and pivot analytics.
+""",
     'depends': ['base', 'mail'],
     # Order matters: security first, then sequences, views (actions) before the
     # menus that reference them, the report, and finally demo data.
