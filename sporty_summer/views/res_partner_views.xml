@@ -6,7 +6,7 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <notebook position="inside">
+            <xpath expr="//notebook" position="inside">
                 <page string="Sporty Summer" name="sporty">
                     <group>
                         <group string="Profile">
@@ -29,7 +29,7 @@
                         </list>
                     </field>
                 </page>
-            </notebook>
+            </xpath>
         </field>
     </record>
 </odoo>
