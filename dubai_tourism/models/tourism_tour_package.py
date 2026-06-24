@@ -45,6 +45,13 @@ class TourismTourPackage(models.Model):
 
     booking_ids = fields.One2many("tourism.booking", "package_id", string="Bookings")
     review_ids = fields.One2many("tourism.review", "package_id", string="Reviews")
+    itinerary_line_ids = fields.One2many("tourism.itinerary.line", "package_id", string="Itinerary")
+    departure_ids = fields.One2many("tourism.departure", "package_id", string="Departures")
+    departure_count = fields.Integer(compute="_compute_departure_count")
+
+    def _compute_departure_count(self):
+        for package in self:
+            package.departure_count = len(package.departure_ids)
 
     booking_count = fields.Integer(compute="_compute_booking_stats")
     confirmed_revenue = fields.Monetary(compute="_compute_booking_stats", store=True)
@@ -94,6 +101,17 @@ class TourismTourPackage(models.Model):
             "name": "Reviews",
             "res_model": "tourism.review",
             "view_mode": "list,form",
+            "domain": [("package_id", "=", self.id)],
+            "context": {"default_package_id": self.id},
+        }
+
+    def action_view_departures(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Departures",
+            "res_model": "tourism.departure",
+            "view_mode": "list,calendar,form",
             "domain": [("package_id", "=", self.id)],
             "context": {"default_package_id": self.id},
         }

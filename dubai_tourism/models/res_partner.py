@@ -5,6 +5,7 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     is_taxi_company = fields.Boolean(string="Taxi Company")
+    is_tour_guide = fields.Boolean(string="Tour Guide")
     tourism_booking_ids = fields.One2many("tourism.booking", "customer_id", string="Tour Bookings")
     tourism_booking_count = fields.Integer(compute="_compute_tourism_stats")
     tourism_total_spent = fields.Monetary(

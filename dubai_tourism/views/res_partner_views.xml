@@ -10,6 +10,7 @@
                     <group>
                         <group string="Profile">
                             <field name="is_taxi_company"/>
+                            <field name="is_tour_guide"/>
                         </group>
                         <group string="Activity">
                             <field name="tourism_booking_count"/>

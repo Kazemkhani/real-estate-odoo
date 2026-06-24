@@ -72,6 +72,9 @@
                         <button class="oe_stat_button" type="object" name="action_view_reviews" icon="fa-star">
                             <field name="review_count" widget="statinfo" string="Reviews"/>
                         </button>
+                        <button class="oe_stat_button" type="object" name="action_view_departures" icon="fa-calendar">
+                            <field name="departure_count" widget="statinfo" string="Departures"/>
+                        </button>
                     </div>
                     <field name="image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
@@ -98,6 +101,27 @@
                     <notebook>
                         <page string="Description">
                             <field name="description" placeholder="What's included, the itinerary..."/>
+                        </page>
+                        <page string="Itinerary">
+                            <field name="itinerary_line_ids">
+                                <list editable="bottom">
+                                    <field name="day_number"/>
+                                    <field name="title"/>
+                                    <field name="destination_id"/>
+                                    <field name="description"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Departures">
+                            <field name="departure_ids">
+                                <list>
+                                    <field name="departure_date"/>
+                                    <field name="guide_id"/>
+                                    <field name="seats_booked"/>
+                                    <field name="capacity"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
                         </page>
                         <page string="Reviews">
                             <field name="review_ids" readonly="1">

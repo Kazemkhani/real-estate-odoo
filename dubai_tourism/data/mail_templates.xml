@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="mail_template_booking_confirmation" model="mail.template">
+            <field name="name">Tour Booking: Confirmation</field>
+            <field name="model_id" ref="model_tourism_booking"/>
+            <field name="subject">{{ object.name }} — Your Dubai tour is confirmed</field>
+            <field name="email_from">{{ (object.salesperson_id.email_formatted or user.email_formatted) }}</field>
+            <field name="partner_to">{{ object.customer_id.id }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">
+                    <p>Dear <t t-out="object.customer_id.name or ''">Customer</t>,</p>
+                    <p>Thank you for booking <strong><t t-out="object.package_id.name or ''">Tour</t></strong>
+                       with us. Your booking <strong><t t-out="object.name or ''">REF</t></strong> is confirmed.</p>
+                    <ul>
+                        <li>Departure: <t t-out="object.departure_date or ''"></t></li>
+                        <li>Travellers: <t t-out="object.group_size or 0"></t>
+                            (<t t-out="object.adult_count or 0"></t> adults,
+                             <t t-out="object.child_count or 0"></t> children)</li>
+                        <li>Total: <t t-out="object.amount_total or 0"></t>
+                            <t t-out="object.currency_id.name or ''"></t></li>
+                    </ul>
+                    <p>Please settle payment before departure. We look forward to welcoming you.</p>
+                    <p>Dubai Tourism</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_booking_receipt" model="mail.template">
+            <field name="name">Tour Booking: Payment Receipt</field>
+            <field name="model_id" ref="model_tourism_booking"/>
+            <field name="subject">{{ object.name }} — Payment received</field>
+            <field name="email_from">{{ (object.salesperson_id.email_formatted or user.email_formatted) }}</field>
+            <field name="partner_to">{{ object.customer_id.id }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">
+                    <p>Dear <t t-out="object.customer_id.name or ''">Customer</t>,</p>
+                    <p>We have received your payment of
+                       <strong><t t-out="object.amount_total or 0"></t>
+                       <t t-out="object.currency_id.name or ''"></t></strong>
+                       for booking <strong><t t-out="object.name or ''">REF</t></strong>.</p>
+                    <p>Your spot on <t t-out="object.package_id.name or ''">the tour</t> is secured. Enjoy Dubai!</p>
+                    <p>Dubai Tourism</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

@@ -211,5 +211,53 @@
             <field name="rating">4</field>
             <field name="comment">Great overview of the city, kids loved it.</field>
         </record>
+
+        <!-- ============ Tour guide ============ -->
+        <record id="guide_sara" model="res.partner">
+            <field name="name">Sara (Guide)</field>
+            <field name="is_tour_guide" eval="True"/>
+        </record>
+
+        <!-- ============ Itinerary (for the city package) ============ -->
+        <record id="itin_city_1" model="tourism.itinerary.line">
+            <field name="package_id" ref="pkg_city"/>
+            <field name="day_number">1</field>
+            <field name="title">Morning: Burj Khalifa &amp; Downtown</field>
+            <field name="destination_id" ref="dest_burj"/>
+            <field name="description">At The Top observation deck and Dubai Fountain.</field>
+        </record>
+        <record id="itin_city_2" model="tourism.itinerary.line">
+            <field name="package_id" ref="pkg_city"/>
+            <field name="day_number">1</field>
+            <field name="title">Afternoon: Marina &amp; Old Dubai</field>
+            <field name="destination_id" ref="dest_marina"/>
+            <field name="description">Marina walk, abra ride and the spice souk.</field>
+        </record>
+
+        <!-- ============ Scheduled departures ============ -->
+        <record id="dep_city_jul" model="tourism.departure">
+            <field name="package_id" ref="pkg_city"/>
+            <field name="departure_date">2026-07-20</field>
+            <field name="capacity">30</field>
+            <field name="guide_id" ref="guide_sara"/>
+            <field name="state">confirmed</field>
+        </record>
+        <record id="dep_desert_jul" model="tourism.departure">
+            <field name="package_id" ref="pkg_desert"/>
+            <field name="departure_date">2026-07-12</field>
+            <field name="capacity">24</field>
+            <field name="guide_id" ref="guide_sara"/>
+            <field name="state">scheduled</field>
+        </record>
+
+        <!-- A booking attached to a scheduled departure -->
+        <record id="bk_city_departure" model="tourism.booking">
+            <field name="customer_id" ref="cust_chen"/>
+            <field name="package_id" ref="pkg_city"/>
+            <field name="departure_id" ref="dep_city_jul"/>
+            <field name="departure_date">2026-07-20</field>
+            <field name="adult_count">3</field>
+            <field name="state">paid</field>
+        </record>
     </data>
 </odoo>

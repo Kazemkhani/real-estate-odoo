@@ -1,12 +1,11 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
-# Commercial rules from the case study:
-#   * families travelling with young children get a benefit,
-#   * groups of ten or more get a discounted rate.
-FAMILY_DISCOUNT_PERCENT = 5.0      # applied when at least one child travels
-GROUP_DISCOUNT_PERCENT = 10.0      # applied when the group reaches the threshold
-GROUP_THRESHOLD = 10
+from .res_config_settings import (
+    DEFAULT_FAMILY_DISCOUNT,
+    DEFAULT_GROUP_DISCOUNT,
+    DEFAULT_GROUP_THRESHOLD,
+)
 
 
 class TourismBooking(models.Model):
@@ -21,6 +20,11 @@ class TourismBooking(models.Model):
     name = fields.Char(string="Reference", required=True, copy=False, readonly=True, default="New")
     customer_id = fields.Many2one("res.partner", string="Customer", required=True, tracking=True)
     package_id = fields.Many2one("tourism.tour.package", string="Package", required=True, tracking=True)
+    departure_id = fields.Many2one(
+        "tourism.departure", string="Departure", tracking=True, ondelete="restrict",
+        help="Optional: attach this booking to a scheduled departure to manage seats per trip.",
+    )
+    guide_id = fields.Many2one(related="departure_id.guide_id", string="Tour Guide", readonly=True)
     salesperson_id = fields.Many2one(
         "res.users", string="Agent", default=lambda self: self.env.user, tracking=True
     )
@@ -78,21 +82,34 @@ class TourismBooking(models.Model):
     )
 
     # --- Computes ----------------------------------------------------------
+    def _discount_config(self):
+        """Read the discount rules from Settings, falling back to the case-study
+        defaults when a parameter has never been set."""
+        get = self.env["ir.config_parameter"].sudo().get_param
+        return {
+            "family": float(get("dubai_tourism.family_discount", DEFAULT_FAMILY_DISCOUNT)),
+            "group": float(get("dubai_tourism.group_discount", DEFAULT_GROUP_DISCOUNT)),
+            "threshold": int(float(get("dubai_tourism.group_threshold", DEFAULT_GROUP_THRESHOLD))),
+        }
+
     @api.depends("adult_count", "child_count")
     def _compute_group_size(self):
+        threshold = self._discount_config()["threshold"]
         for booking in self:
             booking.group_size = booking.adult_count + booking.child_count
             booking.has_young_children = booking.child_count > 0
-            booking.is_group = (booking.adult_count + booking.child_count) >= GROUP_THRESHOLD
+            booking.is_group = booking.group_size >= threshold
 
     @api.depends("adult_count", "child_count", "package_id.price_adult", "package_id.price_child")
     def _compute_amounts(self):
+        cfg = self._discount_config()
         for booking in self:
             adults = booking.adult_count * booking.package_id.price_adult
             children = booking.child_count * booking.package_id.price_child
             subtotal = adults + children
-            family = subtotal * FAMILY_DISCOUNT_PERCENT / 100.0 if booking.child_count > 0 else 0.0
-            group = subtotal * GROUP_DISCOUNT_PERCENT / 100.0 if (booking.adult_count + booking.child_count) >= GROUP_THRESHOLD else 0.0
+            size = booking.adult_count + booking.child_count
+            family = subtotal * cfg["family"] / 100.0 if booking.child_count > 0 else 0.0
+            group = subtotal * cfg["group"] / 100.0 if size >= cfg["threshold"] else 0.0
             booking.amount_adults = adults
             booking.amount_children = children
             booking.amount_untaxed = subtotal
@@ -108,6 +125,14 @@ class TourismBooking(models.Model):
             live = booking.transport_assignment_ids.filtered(lambda a: a.state != "cancelled")
             booking.transport_commission = sum(live.mapped("commission_amount"))
 
+    # --- Onchange ----------------------------------------------------------
+    @api.onchange("departure_id")
+    def _onchange_departure(self):
+        # A departure fixes the package and the date for the trip.
+        if self.departure_id:
+            self.package_id = self.departure_id.package_id
+            self.departure_date = self.departure_id.departure_date
+
     # --- Constraints -------------------------------------------------------
     @api.constrains("adult_count", "child_count", "package_id")
     def _check_capacity(self):
@@ -120,6 +145,31 @@ class TourismBooking(models.Model):
                     % (booking.package_id.name, cap, size)
                 )
 
+    @api.constrains("departure_id", "package_id", "adult_count", "child_count", "state")
+    def _check_departure(self):
+        """When a booking is tied to a scheduled departure, it must match that
+        departure's package and must not overbook the trip's seats."""
+        for booking in self:
+            dep = booking.departure_id
+            if not dep:
+                continue
+            if booking.state == "cancelled":
+                continue
+            if booking.package_id != dep.package_id:
+                raise ValidationError(
+                    "Booking %s must use the package of its departure (%s)."
+                    % (booking.name, dep.package_id.name)
+                )
+            booked = sum(
+                b.group_size for b in dep.booking_ids
+                if b.state != "cancelled"
+            )
+            if booked > dep.capacity:
+                raise ValidationError(
+                    "Departure '%s' is full: %d/%d seats. This booking would overbook it."
+                    % (dep.name, booked, dep.capacity)
+                )
+
     # --- Sequence ----------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):
@@ -128,12 +178,31 @@ class TourismBooking(models.Model):
                 vals["name"] = self.env["ir.sequence"].next_by_code("tourism.booking") or "New"
         return super().create(vals_list)
 
+    # --- Email helper ------------------------------------------------------
+    def _auto_email_enabled(self):
+        val = self.env["ir.config_parameter"].sudo().get_param("dubai_tourism.auto_email")
+        # config params are strings — guard against the literal "False"/"0"/empty.
+        return str(val).lower() not in ("false", "0", "", "none")
+
+    def _send_mail(self, template_xmlid):
+        """Email the customer using a template, if auto-emailing is enabled and a
+        valid template/email exists. Failures never block the booking flow."""
+        if not self._auto_email_enabled():
+            return
+        template = self.env.ref(template_xmlid, raise_if_not_found=False)
+        if not template:
+            return
+        for booking in self:
+            if booking.customer_id.email:
+                template.send_mail(booking.id, force_send=False)
+
     # --- State actions -----------------------------------------------------
     def action_confirm(self):
         for booking in self:
             if booking.state != "draft":
                 raise UserError("Only draft bookings can be confirmed.")
             booking.state = "confirmed"
+        self._send_mail("dubai_tourism.mail_template_booking_confirmation")
         return True
 
     def action_register_payment(self):
@@ -141,6 +210,7 @@ class TourismBooking(models.Model):
             if booking.state not in ("draft", "confirmed"):
                 raise UserError("Only an open booking can be marked as paid.")
             booking.state = "paid"
+        self._send_mail("dubai_tourism.mail_template_booking_receipt")
         return True
 
     def action_complete(self):
@@ -186,3 +256,23 @@ class TourismBooking(models.Model):
             "domain": [("booking_id", "=", self.id)],
             "context": {"default_booking_id": self.id, "default_passenger_count": self.group_size},
         }
+
+    # --- Scheduled action --------------------------------------------------
+    @api.model
+    def _cron_cancel_overdue_unpaid(self):
+        """Cancel bookings that are still unpaid a configurable number of days
+        after their departure date. Disabled when the setting is 0."""
+        days = int(float(self.env["ir.config_parameter"].sudo().get_param(
+            "dubai_tourism.auto_cancel_days", 0)))
+        if days <= 0:
+            return
+        from datetime import timedelta
+        cutoff = fields.Date.today() - timedelta(days=days)
+        overdue = self.search([
+            ("state", "in", ("draft", "confirmed")),
+            ("departure_date", "<", cutoff),
+        ])
+        if overdue:
+            overdue.write({"state": "cancelled"})
+            for booking in overdue:
+                booking.message_post(body="Automatically cancelled: unpaid past departure.")
