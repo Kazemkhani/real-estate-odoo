@@ -39,11 +39,13 @@ It is built as **two modules**:
 > discounts, calendar + pivot analytics, and a 20-case test suite). See its
 > [README](sporty_summer/README.md) for the requirement-by-requirement mapping.
 >
-> 🧳 **Second case study:** [`dubai_tourism`](dubai_tourism/) — a **Tourism Management ERP**
-> for a Dubai tour agency (tour packages, bookings, internal fleet + third-party taxi
-> coordination with commissions, family/group discounts, reviews, and analytics). Fully
-> validated on a real Odoo 19 instance with 20 passing tests — see its
-> [README](dubai_tourism/README.md).
+> 🧳 **Second case study:** [`dubai_tourism`](dubai_tourism/) — an enterprise-grade
+> **Tourism Management ERP** for a Dubai tour agency: tour packages, bookings,
+> **scheduled departures** with overbooking prevention, internal fleet + third-party
+> taxi coordination with commissions, configurable family/group discounts, reviews,
+> email automation, analytics, and an optional [`tourism_accounts`](tourism_accounts/)
+> invoicing bridge. Fully validated on a real Odoo 19 instance — **31 + 2 passing
+> tests** — see its [README](dubai_tourism/README.md).
 
 ---
 
