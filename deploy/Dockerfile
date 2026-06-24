@@ -9,6 +9,7 @@ FROM odoo:19
 COPY ./estate /mnt/extra-addons/estate
 COPY ./estate_accounts /mnt/extra-addons/estate_accounts
 COPY ./sporty_summer /mnt/extra-addons/sporty_summer
+COPY ./dubai_tourism /mnt/extra-addons/dubai_tourism
 COPY ./deploy/odoo.conf /etc/odoo/odoo.conf
 
 # Odoo serves HTTP on 8069 (and 8072 for longpolling).

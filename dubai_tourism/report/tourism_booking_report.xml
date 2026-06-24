@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_tourism_booking" model="ir.actions.report">
+        <field name="name">Tour Voucher</field>
+        <field name="model">tourism.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dubai_tourism.report_tourism_booking</field>
+        <field name="report_file">dubai_tourism.report_tourism_booking</field>
+        <field name="binding_model_id" ref="model_tourism_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_tourism_booking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Tour Voucher</h2>
+                        <h3 class="text-muted" t-field="doc.name"/>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Customer:</strong> <span t-field="doc.customer_id"/><br/>
+                                <strong>Package:</strong> <span t-field="doc.package_id"/><br/>
+                                <strong>Departure:</strong> <span t-field="doc.departure_date"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Adults:</strong> <span t-field="doc.adult_count"/><br/>
+                                <strong>Children:</strong> <span t-field="doc.child_count"/><br/>
+                                <strong>Group size:</strong> <span t-field="doc.group_size"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Adults (<span t-field="doc.adult_count"/>)</td>
+                                    <td class="text-end"><span t-field="doc.amount_adults"/></td>
+                                </tr>
+                                <tr t-if="doc.child_count">
+                                    <td>Children (<span t-field="doc.child_count"/>)</td>
+                                    <td class="text-end"><span t-field="doc.amount_children"/></td>
+                                </tr>
+                                <tr t-if="doc.family_discount">
+                                    <td class="text-end"><strong>Family benefit</strong></td>
+                                    <td class="text-end">- <span t-field="doc.family_discount"/></td>
+                                </tr>
+                                <tr t-if="doc.group_discount">
+                                    <td class="text-end"><strong>Group discount</strong></td>
+                                    <td class="text-end">- <span t-field="doc.group_discount"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end"><strong><span t-field="doc.amount_total"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-muted mt-4">
+                            Thank you for booking with us. Present this voucher at the meeting point.
+                            Dubai Tourism — explore the city with us.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

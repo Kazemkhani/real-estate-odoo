@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tourism_tour_package_action" model="ir.actions.act_window">
+        <field name="name">Tour Packages</field>
+        <field name="res_model">tourism.tour.package</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <record id="tourism_tour_package_view_list" model="ir.ui.view">
+        <field name="name">tourism.tour.package.list</field>
+        <field name="model">tourism.tour.package</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="duration_days"/>
+                <field name="capacity"/>
+                <field name="price_adult" widget="monetary"/>
+                <field name="price_child" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="booking_count"/>
+                <field name="confirmed_revenue" widget="monetary" optional="show"/>
+                <field name="avg_rating" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="tourism_tour_package_view_kanban" model="ir.ui.view">
+        <field name="name">tourism.tour.package.kanban</field>
+        <field name="model">tourism.tour.package</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="category" sample="1" class="o_tourism_kanban">
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="d-flex align-items-center me-2">
+                            <field name="image" widget="image" options="{'img_class': 'object-fit-cover', 'size': [64, 64]}"/>
+                        </aside>
+                        <main>
+                            <field name="name" class="fw-bold fs-5"/>
+                            <div class="text-muted"><field name="category"/> · <field name="duration_days"/> day(s)</div>
+                            <div class="d-flex gap-2 mt-1">
+                                <span class="text-muted">From</span>
+                                <field name="price_adult" widget="monetary"/>
+                                <span class="text-muted">/ adult</span>
+                            </div>
+                            <footer class="pt-1">
+                                <span class="badge text-bg-warning" invisible="review_count == 0">
+                                    <i class="fa fa-star me-1"/><field name="avg_rating"/>
+                                </span>
+                                <div class="ms-auto text-muted">
+                                    <i class="fa fa-suitcase me-1"/><field name="booking_count"/> bookings
+                                </div>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="tourism_tour_package_view_form" model="ir.ui.view">
+        <field name="name">tourism.tour.package.form</field>
+        <field name="model">tourism.tour.package</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_bookings" icon="fa-suitcase">
+                            <field name="booking_count" widget="statinfo" string="Bookings"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_reviews" icon="fa-star">
+                            <field name="review_count" widget="statinfo" string="Reviews"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Package name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="duration_days"/>
+                            <field name="capacity"/>
+                        </group>
+                        <group>
+                            <field name="price_adult" widget="monetary"/>
+                            <field name="price_child" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="avg_rating"/>
+                            <field name="confirmed_revenue" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="Destinations">
+                        <field name="destination_ids" widget="many2many_tags" options="{'color_field': 'color'}" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="What's included, the itinerary..."/>
+                        </page>
+                        <page string="Reviews">
+                            <field name="review_ids" readonly="1">
+                                <list>
+                                    <field name="customer_id"/>
+                                    <field name="rating" widget="priority"/>
+                                    <field name="comment"/>
+                                    <field name="create_date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

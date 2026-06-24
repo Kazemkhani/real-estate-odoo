@@ -38,6 +38,12 @@ It is built as **two modules**:
 > participation, first-come coaching registration, equipment loan/loss tracking, loyalty
 > discounts, calendar + pivot analytics, and a 20-case test suite). See its
 > [README](sporty_summer/README.md) for the requirement-by-requirement mapping.
+>
+> 🧳 **Second case study:** [`dubai_tourism`](dubai_tourism/) — a **Tourism Management ERP**
+> for a Dubai tour agency (tour packages, bookings, internal fleet + third-party taxi
+> coordination with commissions, family/group discounts, reviews, and analytics). Fully
+> validated on a real Odoo 19 instance with 20 passing tests — see its
+> [README](dubai_tourism/README.md).
 
 ---
 

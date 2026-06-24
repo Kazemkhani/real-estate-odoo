@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tourism_booking_action" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">tourism.booking</field>
+        <field name="view_mode">list,kanban,calendar,form,graph,pivot</field>
+        <field name="context">{'search_default_group_package': 1}</field>
+    </record>
+
+    <record id="tourism_booking_view_list" model="ir.ui.view">
+        <field name="name">tourism.booking.list</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'confirmed'"
+                  decoration-success="state == 'paid'"
+                  decoration-bf="state == 'paid'"
+                  decoration-muted="state in ('completed', 'cancelled')">
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="package_id"/>
+                <field name="departure_date"/>
+                <field name="adult_count"/>
+                <field name="child_count"/>
+                <field name="group_size"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'confirmed'"
+                       decoration-success="state == 'paid'"
+                       decoration-warning="state == 'completed'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_form" model="ir.ui.view">
+        <field name="name">tourism.booking.form</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_register_payment" type="object" string="Register Payment"
+                            class="btn-primary" invisible="state not in ('draft', 'confirmed')"/>
+                    <button name="action_complete" type="object" string="Mark Completed"
+                            invisible="state != 'paid'"/>
+                    <button name="action_assign_transport" type="object" string="Assign Transport"
+                            class="btn-secondary" invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,paid,completed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger"
+                            invisible="state != 'cancelled'"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_transport" icon="fa-bus">
+                            <field name="transport_count" widget="statinfo" string="Transport"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="package_id"/>
+                            <field name="departure_date"/>
+                            <field name="duration_days"/>
+                            <field name="salesperson_id"/>
+                        </group>
+                        <group>
+                            <field name="adult_count"/>
+                            <field name="child_count"/>
+                            <field name="group_size"/>
+                            <field name="has_young_children"/>
+                            <field name="is_group"/>
+                        </group>
+                    </group>
+                    <group string="Pricing">
+                        <group>
+                            <field name="amount_adults" widget="monetary"/>
+                            <field name="amount_children" widget="monetary"/>
+                            <field name="amount_untaxed" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="family_discount" widget="monetary"/>
+                            <field name="group_discount" widget="monetary"/>
+                            <field name="amount_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Transport">
+                            <field name="transport_assignment_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="transport_type"/>
+                                    <field name="vehicle_id"/>
+                                    <field name="taxi_company_id"/>
+                                    <field name="passenger_count"/>
+                                    <field name="cost" widget="monetary"/>
+                                    <field name="commission_amount" widget="monetary"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="transport_commission" widget="monetary"/>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <field name="note" placeholder="Special requests, itinerary notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_kanban" model="ir.ui.view">
+        <field name="name">tourism.booking.kanban</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_tourism_kanban" sample="1">
+                <field name="state"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold fs-6"><field name="name"/></div>
+                        <field name="package_id"/>
+                        <div class="text-muted"><field name="customer_id"/></div>
+                        <div class="mt-1"><i class="fa fa-calendar me-1"/><field name="departure_date"/></div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span><i class="fa fa-users me-1"/><field name="group_size"/></span>
+                            <field name="amount_total" widget="monetary" class="fw-bold"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_calendar" model="ir.ui.view">
+        <field name="name">tourism.booking.calendar</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Departures" date_start="departure_date" color="package_id" mode="month">
+                <field name="package_id" filters="1"/>
+                <field name="customer_id"/>
+                <field name="group_size"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_search" model="ir.ui.view">
+        <field name="name">tourism.booking.search</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="customer_id"/>
+                <field name="package_id"/>
+                <field name="salesperson_id"/>
+                <filter name="families" string="Families" domain="[('has_young_children', '=', True)]"/>
+                <filter name="groups" string="Groups (10+)" domain="[('is_group', '=', True)]"/>
+                <separator/>
+                <filter name="unpaid" string="Awaiting Payment" domain="[('state', 'in', ['draft', 'confirmed'])]"/>
+                <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+                <filter name="completed" string="Completed" domain="[('state', '=', 'completed')]"/>
+                <group>
+                    <filter name="group_package" string="Package" context="{'group_by': 'package_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_salesperson" string="Agent" context="{'group_by': 'salesperson_id'}"/>
+                    <filter name="group_departure" string="Departure" context="{'group_by': 'departure_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_graph" model="ir.ui.view">
+        <field name="name">tourism.booking.graph</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <graph string="Bookings" sample="1">
+                <field name="package_id"/>
+                <field name="amount_total" type="measure"/>
+                <field name="group_size" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="tourism_booking_view_pivot" model="ir.ui.view">
+        <field name="name">tourism.booking.pivot</field>
+        <field name="model">tourism.booking</field>
+        <field name="arch" type="xml">
+            <pivot string="Bookings" sample="1">
+                <field name="package_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

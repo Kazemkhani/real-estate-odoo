@@ -1,0 +1,11 @@
+// Light polish for the Dubai Tourism kanban boards.
+.o_tourism_kanban {
+    .o_kanban_record {
+        border-radius: 8px;
+        transition: box-shadow 0.15s ease-in-out;
+
+        &:hover {
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        }
+    }
+}

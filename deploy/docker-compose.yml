@@ -34,6 +34,7 @@ services:
       - ../estate:/mnt/extra-addons/estate:ro
       - ../estate_accounts:/mnt/extra-addons/estate_accounts:ro
       - ../sporty_summer:/mnt/extra-addons/sporty_summer:ro
+      - ../dubai_tourism:/mnt/extra-addons/dubai_tourism:ro
     restart: unless-stopped
 
 volumes:

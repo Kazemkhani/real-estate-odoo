@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tourism_res_partner_view_form" model="ir.ui.view">
+        <field name="name">res.partner.form.tourism</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Tourism" name="tourism">
+                    <group>
+                        <group string="Profile">
+                            <field name="is_taxi_company"/>
+                        </group>
+                        <group string="Activity">
+                            <field name="tourism_booking_count"/>
+                            <field name="tourism_total_spent" widget="monetary"/>
+                            <field name="company_currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="tourism_booking_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="package_id"/>
+                            <field name="departure_date"/>
+                            <field name="group_size"/>
+                            <field name="amount_total" widget="monetary"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
