@@ -15,6 +15,7 @@ class ResPartner(models.Model):
         "res.currency", compute="_compute_company_currency", string="Company Currency"
     )
 
+    @api.depends("company_id")
     def _compute_company_currency(self):
         for partner in self:
             partner.company_currency_id = partner.company_id.currency_id or self.env.company.currency_id

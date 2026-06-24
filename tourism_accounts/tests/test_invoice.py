@@ -10,7 +10,9 @@ class TestTourismInvoice(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.package = cls.env["tourism.tour.package"].create({
+        # The accounting test user isn't a Dubai Tourism user, so create the
+        # tourism records as sudo; the invoicing assertions below are unaffected.
+        cls.package = cls.env["tourism.tour.package"].sudo().create({
             "name": "City Tour",
             "price_adult": 200.0,
             "price_child": 100.0,
@@ -18,7 +20,7 @@ class TestTourismInvoice(AccountTestInvoicingCommon):
         })
 
     def _booking(self, adults=2, children=0):
-        return self.env["tourism.booking"].create({
+        return self.env["tourism.booking"].sudo().create({
             "customer_id": self.partner_a.id,
             "package_id": self.package.id,
             "departure_date": "2030-01-01",

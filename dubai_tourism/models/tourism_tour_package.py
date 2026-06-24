@@ -49,6 +49,7 @@ class TourismTourPackage(models.Model):
     departure_ids = fields.One2many("tourism.departure", "package_id", string="Departures")
     departure_count = fields.Integer(compute="_compute_departure_count")
 
+    @api.depends("departure_ids")
     def _compute_departure_count(self):
         for package in self:
             package.departure_count = len(package.departure_ids)

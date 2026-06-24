@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Odoo-19.0-714B67?logo=odoo&logoColor=white" alt="Odoo 19"/>
-  <img src="https://img.shields.io/badge/tests-20%20passing-success" alt="Tested"/>
+  <img src="https://img.shields.io/badge/tests-31%20passing-success" alt="Tested"/>
   <img src="https://img.shields.io/badge/validated-on%20real%20Odoo-1f9d57" alt="Validated"/>
   <img src="https://img.shields.io/badge/License-LGPL--3.0-blue" alt="License"/>
 </p>
@@ -33,6 +33,18 @@
 | Customer satisfaction | `tourism.review` star ratings → package average rating |
 | Roles & access | Agent (sees own bookings) vs Manager (sees all) + record rules |
 | Productivity | an **"Assign Transport" wizard**, a QWeb **tour-voucher PDF**, and seeded demo data |
+
+### Enterprise extensions
+
+| Capability | Implementation |
+|---|---|
+| **Scheduled departures** | `tourism.departure` — per-trip seat capacity with **overbooking prevention**, guide & vehicle assignment, seat/revenue tracking, departures calendar |
+| **Configurable rules** | a **Settings** page (discount %s, group threshold, default commission, email & auto-cancel toggles) — no code change to retune the business |
+| **Day-by-day itinerary** | `tourism.itinerary.line` per package |
+| **Tour guides** | guide flag on partners, assignable to departures |
+| **Email automation** | confirmation & receipt **mail templates** sent on confirm/pay (toggle in Settings) |
+| **Scheduled cleanup** | `ir.cron` cancels overdue unpaid bookings (configurable) |
+| **Accounting** | optional [`tourism_accounts`](../tourism_accounts) bridge auto-creates an itemised **customer invoice** on payment |
 
 ---
 
@@ -61,13 +73,18 @@ tourism.destination ─M:N─ tourism.tour.package ─1:N─ tourism.booking ─
 
 ## ✅ Tested & validated
 
-20 `TransactionCase` tests (pricing, family + group discounts, capacity, the
-payment-gated state machine, internal seat limits, third-party commission, the
-transport wizard, package stats and ratings) — **all green on a real Odoo 19
-instance**, with demo data loading cleanly.
+**31** `TransactionCase` tests (pricing, family + group discounts, configurable
+rules, capacity, the payment-gated state machine, scheduled-departure
+overbooking, internal seat limits, third-party commission, the transport wizard,
+email/cron automation, package stats and ratings) — plus **2** more in the
+accounting bridge — **all green on a real Odoo 19 instance**, with demo data
+loading cleanly.
 
 ```bash
+# core module
 ./odoo-bin -c odoo.conf -d test_db -i dubai_tourism --test-enable --stop-after-init
+# accounting bridge (needs the accounting app)
+./odoo-bin -c odoo.conf -d test_db -i tourism_accounts --test-enable --stop-after-init
 ```
 
 ## 🚀 Run it
