@@ -17,7 +17,7 @@ jobs:
           python-version: "3.12"
 
       - name: Byte-compile all Python
-        run: python -m compileall -q estate estate_accounts sporty_summer dubai_tourism
+        run: python -m compileall -q estate estate_accounts sporty_summer dubai_tourism tourism_accounts
 
       - name: Validate every XML file is well-formed
         run: |
