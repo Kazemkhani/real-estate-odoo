@@ -281,7 +281,9 @@ These are real gotchas already hit and solved. Honor them.
 14. **SQL `UNIQUE`/`CHECK` violations poison the cursor** in tests — wrap the expecting block in `with self.assertRaises(Exception), self.env.cr.savepoint():` and `@mute_logger("odoo.sql_db")`.
 15. **Docker: a module not mounted = silently not installed** (`-i` is a no‑op, "0 tests" runs). Always add new modules to `deploy/docker-compose.yml` volumes **and** `deploy/Dockerfile` COPY lines.
 16. **Manifest `data` order matters:** security → sequences → data → views (actions before the menus that reference them) → report → menus. Demo goes in `demo`.
-17. **Validate before claiming done:** `-i <module> --test-enable --stop-after-init` and grep for `0 failed, 0 error`. Also do a `--without-demo=False` load to prove demo + views parse.
+17. **`res.users` group field is `group_ids`** in Odoo 19 (renamed from `groups_id`). Using `groups_id` in a `create()` raises `ValueError: Invalid field 'groups_id'`. (Bit the portal tests — fixed.)
+18. **Portal pages** (`type='http', auth='user', website=True`) work with only the `portal` dependency (no `website` needed). Use `CustomerPortal._document_check_access(...)` for per-record access, render related fields on `.sudo()` records, and test with `HttpCase` + `self.authenticate(...)`.
+19. **Validate before claiming done:** `-i <module> --test-enable --stop-after-init` and grep for `0 failed, 0 error`. Also do a `--without-demo=False` load to prove demo + views parse.
 
 ---
 

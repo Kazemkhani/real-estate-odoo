@@ -42,5 +42,13 @@
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('group_tourism_manager'))]"/>
         </record>
+
+        <!-- Portal customers see only their own bookings -->
+        <record id="tourism_booking_rule_portal" model="ir.rule">
+            <field name="name">Tour Booking: portal sees own</field>
+            <field name="model_id" ref="model_tourism_booking"/>
+            <field name="domain_force">[('customer_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        </record>
     </data>
 </odoo>

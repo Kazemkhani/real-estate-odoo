@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add a "Tour Bookings" card to the portal home -->
+    <template id="portal_my_home_tourism" inherit_id="portal.portal_my_home" priority="40" name="Portal My Home: Tourism">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Tour Bookings</t>
+                <t t-set="url" t-value="'/my/tours'"/>
+                <t t-set="config_card" t-value="True"/>
+                <t t-set="text">Follow your Dubai tours</t>
+                <t t-set="count" t-value="tour_booking_count"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- List of the customer's bookings -->
+    <template id="portal_my_tours" name="My Tour Bookings">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Reference</th>
+                        <th>Package</th>
+                        <th>Departure</th>
+                        <th class="text-end">Travellers</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-if="not bookings">
+                        <td colspan="6" class="text-muted">You have no tour bookings yet.</td>
+                    </tr>
+                    <tr t-foreach="bookings" t-as="booking">
+                        <td><a t-attf-href="/my/tours/#{booking.id}"><t t-out="booking.name"/></a></td>
+                        <td><t t-out="booking.package_id.name"/></td>
+                        <td><t t-out="booking.departure_date"/></td>
+                        <td class="text-end"><t t-out="booking.group_size"/></td>
+                        <td class="text-end"><t t-out="booking.amount_total" t-options='{"widget": "monetary", "display_currency": booking.currency_id}'/></td>
+                        <td class="text-center"><span class="badge rounded-pill text-bg-info" t-out="booking.state"/></td>
+                    </tr>
+                </tbody>
+            </t>
+            <div t-if="pager" class="o_portal_pager text-center">
+                <t t-call="portal.pager"/>
+            </div>
+        </t>
+    </template>
+
+    <!-- Single booking detail -->
+    <template id="portal_my_tour" name="Tour Booking">
+        <t t-call="portal.portal_layout">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h4>Booking <span t-out="booking.name"/>
+                        <span class="badge rounded-pill text-bg-info float-end" t-out="booking.state"/>
+                    </h4>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Package:</strong> <span t-out="booking.package_id.name"/></p>
+                            <p><strong>Departure:</strong> <span t-out="booking.departure_date"/></p>
+                            <p><strong>Tour guide:</strong> <span t-out="booking.guide_id.name or '—'"/></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Adults:</strong> <span t-out="booking.adult_count"/></p>
+                            <p><strong>Children:</strong> <span t-out="booking.child_count"/></p>
+                            <p><strong>Total:</strong>
+                               <span t-out="booking.amount_total" t-options='{"widget": "monetary", "display_currency": booking.currency_id}'/></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -11,7 +11,7 @@ discounts), internal fleet plus third-party taxi coordination and the commission
 the agency earns on it, payment tracking, customer reviews, and booking/revenue
 analytics.
 """,
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'portal'],
     'data': [
         'security/tourism_security.xml',
         'security/ir.model.access.csv',
@@ -28,6 +28,7 @@ analytics.
         'views/res_partner_views.xml',
         'views/tourism_assign_transport_wizard_views.xml',
         'views/res_config_settings_views.xml',
+        'views/portal_templates.xml',
         'report/tourism_booking_report.xml',
         'views/tourism_menus.xml',
     ],
