@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_tourism" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.tourism</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Dubai Tourism" name="dubai_tourism">
+                    <block title="Discounts" name="tourism_discounts">
+                        <setting string="Family Discount" help="Applied when a booking includes children.">
+                            <field name="tourism_family_discount"/> %
+                        </setting>
+                        <setting string="Group Discount" help="Applied at the group threshold.">
+                            <field name="tourism_group_discount"/> %
+                        </setting>
+                        <setting string="Group Threshold" help="Travellers from which a booking is a group.">
+                            <field name="tourism_group_threshold"/>
+                        </setting>
+                    </block>
+                    <block title="Transport" name="tourism_transport">
+                        <setting string="Default Commission" help="Default third-party transport commission.">
+                            <field name="tourism_default_commission"/> %
+                        </setting>
+                    </block>
+                    <block title="Automation" name="tourism_automation">
+                        <setting string="Booking Emails" help="Email the customer on confirmation and payment.">
+                            <field name="tourism_auto_email"/>
+                        </setting>
+                        <setting string="Auto-cancel Unpaid"
+                                 help="Cancel unpaid bookings this many days after departure (0 = off).">
+                            <field name="tourism_auto_cancel_days"/> days
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="tourism_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'dubai_tourism'}</field>
+    </record>
+</odoo>
