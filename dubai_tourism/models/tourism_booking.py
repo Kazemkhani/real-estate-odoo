@@ -176,6 +176,13 @@ class TourismBooking(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            # A departure fixes the package and date. In the form these fields are
+            # read-only once a departure is picked, so the web client doesn't send
+            # them — derive them here so the required package_id is never null.
+            if vals.get("departure_id"):
+                departure = self.env["tourism.departure"].browse(vals["departure_id"])
+                vals.setdefault("package_id", departure.package_id.id)
+                vals.setdefault("departure_date", departure.departure_date)
             if not vals.get("name") or vals["name"] == "New":
                 vals["name"] = self.env["ir.sequence"].next_by_code("tourism.booking") or "New"
         return super().create(vals_list)
