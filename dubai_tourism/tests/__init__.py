@@ -5,3 +5,4 @@ from . import test_package_review
 from . import test_advanced
 from . import test_wave1
 from . import test_portal
+from . import test_form_flow

@@ -69,8 +69,8 @@
                         <group>
                             <field name="customer_id"/>
                             <field name="departure_id"/>
-                            <field name="package_id" readonly="departure_id != False"/>
-                            <field name="departure_date" readonly="departure_id != False"/>
+                            <field name="package_id" readonly="departure_id != False" force_save="1"/>
+                            <field name="departure_date" readonly="departure_id != False" force_save="1"/>
                             <field name="guide_id"/>
                             <field name="duration_days"/>
                             <field name="salesperson_id"/>
