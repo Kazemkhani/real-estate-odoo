@@ -6,3 +6,4 @@ from . import test_advanced
 from . import test_wave1
 from . import test_portal
 from . import test_form_flow
+from . import test_audit
