@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="sporty_menu_root" name="Sporty Summer" sequence="20"/>
+
+    <menuitem id="sporty_menu_bookings" name="Bookings"
+              parent="sporty_menu_root" action="sport_booking_action" sequence="10"/>
+
+    <menuitem id="sporty_menu_coaching" name="Coaching"
+              parent="sporty_menu_root" sequence="20"/>
+    <menuitem id="sporty_menu_classes" name="Classes"
+              parent="sporty_menu_coaching" action="sport_coaching_class_action" sequence="10"/>
+    <menuitem id="sporty_menu_registrations" name="Registrations"
+              parent="sporty_menu_coaching" action="sport_class_registration_action" sequence="20"/>
+
+    <menuitem id="sporty_menu_equipment_root" name="Equipment"
+              parent="sporty_menu_root" sequence="30"/>
+    <menuitem id="sporty_menu_equipment" name="Equipment"
+              parent="sporty_menu_equipment_root" action="sport_equipment_action" sequence="10"/>
+    <menuitem id="sporty_menu_loans" name="Loans"
+              parent="sporty_menu_equipment_root" action="sport_equipment_loan_action" sequence="20"/>
+
+    <menuitem id="sporty_menu_config" name="Configuration"
+              parent="sporty_menu_root" sequence="90"
+              groups="group_sporty_manager"/>
+    <menuitem id="sporty_menu_sports" name="Sports"
+              parent="sporty_menu_config" action="sport_type_action" sequence="10"/>
+    <menuitem id="sporty_menu_courts" name="Courts"
+              parent="sporty_menu_config" action="sport_court_action" sequence="20"/>
+</odoo>

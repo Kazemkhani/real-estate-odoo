@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- A reporting-focused entry point that opens straight on the analytics views -->
+    <record id="tourism_booking_report_action" model="ir.actions.act_window">
+        <field name="name">Booking Analysis</field>
+        <field name="res_model">tourism.booking</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{'search_default_group_package': 1}</field>
+    </record>
+
+    <menuitem id="tourism_menu_root" name="Dubai Tourism" sequence="25"/>
+
+    <menuitem id="tourism_menu_bookings" name="Bookings"
+              parent="tourism_menu_root" action="tourism_booking_action" sequence="10"/>
+    <menuitem id="tourism_menu_departures" name="Departures"
+              parent="tourism_menu_root" action="tourism_departure_action" sequence="15"/>
+
+    <menuitem id="tourism_menu_packages" name="Packages" parent="tourism_menu_root" sequence="20"/>
+    <menuitem id="tourism_menu_tour_packages" name="Tour Packages"
+              parent="tourism_menu_packages" action="tourism_tour_package_action" sequence="10"/>
+    <menuitem id="tourism_menu_destinations" name="Destinations"
+              parent="tourism_menu_packages" action="tourism_destination_action" sequence="20"/>
+    <menuitem id="tourism_menu_reviews" name="Reviews"
+              parent="tourism_menu_packages" action="tourism_review_action" sequence="30"/>
+
+    <menuitem id="tourism_menu_transport" name="Transport" parent="tourism_menu_root" sequence="30"/>
+    <menuitem id="tourism_menu_assignments" name="Assignments"
+              parent="tourism_menu_transport" action="tourism_transport_assignment_action" sequence="10"/>
+    <menuitem id="tourism_menu_fleet" name="Fleet"
+              parent="tourism_menu_transport" action="tourism_vehicle_action" sequence="20"/>
+
+    <menuitem id="tourism_menu_reporting" name="Reporting"
+              parent="tourism_menu_root" sequence="90" groups="group_tourism_manager"/>
+    <menuitem id="tourism_menu_booking_analysis" name="Booking Analysis"
+              parent="tourism_menu_reporting" action="tourism_booking_report_action" sequence="10"/>
+    <menuitem id="tourism_menu_fleet_utilization" name="Fleet Utilization"
+              parent="tourism_menu_reporting" action="tourism_transport_utilization_action" sequence="20"/>
+    <menuitem id="tourism_menu_package_performance" name="Package Performance"
+              parent="tourism_menu_reporting" action="tourism_package_performance_action" sequence="30"/>
+    <menuitem id="tourism_menu_destination_popularity" name="Destination Popularity"
+              parent="tourism_menu_reporting" action="tourism_destination_popularity_action" sequence="40"/>
+
+    <menuitem id="tourism_menu_config" name="Configuration"
+              parent="tourism_menu_root" sequence="95" groups="group_tourism_manager"/>
+    <menuitem id="tourism_menu_settings" name="Settings"
+              parent="tourism_menu_config" action="tourism_config_settings_action" sequence="10"/>
+    <menuitem id="tourism_menu_fleet_config" name="Fleet"
+              parent="tourism_menu_config" action="tourism_vehicle_action" sequence="20"/>
+</odoo>

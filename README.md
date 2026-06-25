@@ -11,6 +11,8 @@
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL 16"/>
   <img src="https://img.shields.io/badge/License-LGPL--3.0-blue" alt="License LGPL-3.0"/>
   <img src="https://img.shields.io/badge/status-demo--ready-1f9d57" alt="Demo ready"/>
+  <img src="https://img.shields.io/badge/tests-22%20cases-success" alt="Tested"/>
+  <img src="https://img.shields.io/badge/CI-static%20checks-blue?logo=githubactions&logoColor=white" alt="CI"/>
 </p>
 
 <p align="center">
@@ -29,6 +31,21 @@ It is built as **two modules**:
 |---|---|
 | [`estate`](estate/) | The core domain — properties, types, tags, amenities, offers, views, security, reporting |
 | [`estate_accounts`](estate_accounts/) | Thin bridge that bills the buyer (creates an invoice) when a property is sold |
+
+> 🏟️ **Bootcamp case study:** this repo also ships [`sporty_summer`](sporty_summer/) — a full
+> **Sports Facility Management ERP** for the *Sporty Summer DXB* advanced case study
+> (court bookings with double-booking prevention, per-sport capacity limits, payment-gated
+> participation, first-come coaching registration, equipment loan/loss tracking, loyalty
+> discounts, calendar + pivot analytics, and a 20-case test suite). See its
+> [README](sporty_summer/README.md) for the requirement-by-requirement mapping.
+>
+> 🧳 **Second case study:** [`dubai_tourism`](dubai_tourism/) — an enterprise-grade
+> **Tourism Management ERP** for a Dubai tour agency: tour packages, bookings,
+> **scheduled departures** with overbooking prevention, internal fleet + third-party
+> taxi coordination with commissions, configurable family/group discounts, reviews,
+> email automation, analytics, and an optional [`tourism_accounts`](tourism_accounts/)
+> invoicing bridge. Fully validated on a real Odoo 19 instance — **31 + 2 passing
+> tests** — see its [README](dubai_tourism/README.md).
 
 ---
 
@@ -117,6 +134,18 @@ cp -R estate estate_accounts /path/to/your/addons/
 
 Then enable Developer Mode to explore the Graph/Pivot views and the PDF report.
 
+### 🐳 One-command Docker run / public demo link
+
+Prefer not to install Odoo by hand? A ready-to-run Docker stack lives in
+[`deploy/`](deploy/):
+
+```bash
+docker compose -f deploy/docker-compose.yml up -d   # then open http://localhost:8069
+```
+
+See [`deploy/README.md`](deploy/README.md) for the full walkthrough, including how to
+publish a **free public HTTPS link** (via a Cloudflare tunnel) or host it always-on.
+
 ---
 
 ## 🗂️ Project structure
@@ -141,6 +170,37 @@ real-estate-odoo/
 **Odoo 19.0** · **Python 3.12** · **PostgreSQL 16** · QWeb · Owl/Kanban
 
 Demonstrates: ORM models & relations, computed/related fields, `@api.depends` / `@api.onchange` / `@api.constrains`, `models.Constraint`, action methods, view inheritance (`xpath`), cross-module model inheritance, record rules & groups, and QWeb reporting.
+
+---
+
+## ✅ Tests & CI
+
+The module ships with an automated test suite written with Odoo's
+`TransactionCase` (and `AccountTestInvoicingCommon` for the billing bridge),
+so the business rules are verified, not just demoed:
+
+| Suite | Covers |
+|---|---|
+| `estate/tests/test_estate_property.py` | computed areas & best price, the New→Sold state machine, the 90%-of-expected selling-price constraint, and the delete guard |
+| `estate/tests/test_estate_property_offer.py` | offer → *Offer Received*, **accept locks price/buyer + auto-refuses rivals**, accept/refuse guards, deadline compute↔validity inverse, and the **expiry cron** |
+| `estate/tests/test_estate_make_offer_wizard.py` | the *Make an Offer* wizard creates a valid offer and rejects non-positive prices |
+| `estate_accounts/tests/test_estate_accounts.py` | selling a property raises one customer invoice (6% commission + admin fee), and bills nothing when there is no buyer |
+
+```bash
+# Run the suite against a test database
+./odoo-bin -c odoo.conf -d test_db -i estate,estate_accounts \
+           --test-enable --stop-after-init
+```
+
+A lightweight **GitHub Actions** workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+runs on every push: it byte-compiles all Python, validates that every XML view
+is well-formed, and checks the module manifests parse — catching broken views or
+syntax slips before they ever reach Odoo.
+
+> While writing the tests I also fixed two issues: the offer-expiry **cron searched a
+> non-stored computed field** (`date_deadline`) and would have crashed — now stored and
+> covered by a regression test — and **accepting an offer now auto-refuses the competing
+> offers**, matching the documented behaviour.
 
 ---
 

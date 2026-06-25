@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  static-checks:
+    name: Static checks (compile + XML + manifests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Byte-compile all Python
+        run: python -m compileall -q estate estate_accounts sporty_summer dubai_tourism tourism_accounts
+
+      - name: Validate every XML file is well-formed
+        run: |
+          python - <<'PY'
+          import glob, sys, xml.etree.ElementTree as ET
+          ok = True
+          for path in glob.glob("**/*.xml", recursive=True):
+              try:
+                  ET.parse(path)
+              except ET.ParseError as exc:
+                  print(f"::error file={path}::{exc}")
+                  ok = False
+          print("XML OK" if ok else "XML errors found")
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: Validate module manifests are parseable
+        run: |
+          python - <<'PY'
+          import ast, glob
+          required = {"name", "depends", "data"}
+          for path in glob.glob("**/__manifest__.py", recursive=True):
+              manifest = ast.literal_eval(open(path).read())
+              missing = required - manifest.keys()
+              assert not missing, f"{path} missing keys: {missing}"
+              print(f"OK  {path}  ->  {manifest['name']}")
+          PY

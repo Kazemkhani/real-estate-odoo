@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_sport_booking" model="ir.actions.report">
+        <field name="name">Booking Confirmation</field>
+        <field name="model">sport.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sporty_summer.report_sport_booking</field>
+        <field name="report_file">sporty_summer.report_sport_booking</field>
+        <field name="binding_model_id" ref="model_sport_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_sport_booking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Booking Confirmation</h2>
+                        <h3 class="text-muted" t-field="doc.name"/>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <strong>Customer:</strong> <span t-field="doc.customer_id"/><br/>
+                                <strong>Sport:</strong> <span t-field="doc.sport_type_id"/><br/>
+                                <strong>Court:</strong> <span t-field="doc.court_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Start:</strong> <span t-field="doc.start_datetime"/><br/>
+                                <strong>End:</strong> <span t-field="doc.end_datetime"/><br/>
+                                <strong>Participants:</strong> <span t-field="doc.participant_count"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Duration (h)</th>
+                                    <th class="text-end">Price / Hour</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Court rental — <span t-field="doc.court_id"/></td>
+                                    <td class="text-end"><span t-field="doc.duration"/></td>
+                                    <td class="text-end"><span t-field="doc.unit_price"/></td>
+                                    <td class="text-end"><span t-field="doc.amount_untaxed"/></td>
+                                </tr>
+                                <tr t-if="doc.discount_amount">
+                                    <td colspan="3" class="text-end"><strong>Loyalty Discount (<span t-field="doc.loyalty_discount"/>%)</strong></td>
+                                    <td class="text-end">- <span t-field="doc.discount_amount"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end"><strong><span t-field="doc.amount_total"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-muted mt-4">
+                            Please present this confirmation at the front desk. Payment must be
+                            settled before the session. Sporty Summer DXB — Summer 2026.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

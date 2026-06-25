@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="tourism_assign_transport_wizard_form" model="ir.ui.view">
+        <field name="name">tourism.assign.transport.wizard.form</field>
+        <field name="model">tourism.assign.transport.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Transport">
+                <group>
+                    <field name="booking_id" readonly="1"/>
+                    <field name="transport_type" widget="radio" options="{'horizontal': true}"/>
+                    <field name="vehicle_id" invisible="transport_type != 'internal'"
+                           required="transport_type == 'internal'"/>
+                    <field name="taxi_company_id" invisible="transport_type != 'external'"
+                           required="transport_type == 'external'"/>
+                    <field name="passenger_count"/>
+                    <field name="pickup_location"/>
+                    <field name="dropoff_location"/>
+                    <field name="cost" widget="monetary"/>
+                    <field name="commission_rate" invisible="transport_type != 'external'"/>
+                    <field name="currency_id" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_assign" type="object" string="Assign" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

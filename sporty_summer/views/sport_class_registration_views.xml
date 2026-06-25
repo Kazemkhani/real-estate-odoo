@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sport_class_registration_action" model="ir.actions.act_window">
+        <field name="name">Registrations</field>
+        <field name="res_model">sport.class.registration</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="sport_class_registration_view_list" model="ir.ui.view">
+        <field name="name">sport.class.registration.list</field>
+        <field name="model">sport.class.registration</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'paid'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="class_id"/>
+                <field name="customer_id"/>
+                <field name="registration_date"/>
+                <field name="price" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"/>
+                <button name="action_confirm" type="object" string="Confirm" icon="fa-check"
+                        invisible="state != 'draft'"/>
+                <button name="action_mark_paid" type="object" string="Paid" icon="fa-money"
+                        invisible="state not in ('draft', 'confirmed')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="sport_class_registration_view_form" model="ir.ui.view">
+        <field name="name">sport.class.registration.form</field>
+        <field name="model">sport.class.registration</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_mark_paid" type="object" string="Register Payment"
+                            class="btn-primary" invisible="state not in ('draft', 'confirmed')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="class_id"/>
+                            <field name="customer_id"/>
+                        </group>
+                        <group>
+                            <field name="registration_date"/>
+                            <field name="price" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
