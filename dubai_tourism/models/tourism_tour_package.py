@@ -69,7 +69,8 @@ class TourismTourPackage(models.Model):
         for package in self:
             package.departure_count = len(package.departure_ids)
 
-    booking_count = fields.Integer(compute="_compute_booking_stats")
+    # stored so it can be used as a measure in graph/pivot (read_group needs a column)
+    booking_count = fields.Integer(compute="_compute_booking_stats", store=True)
     confirmed_revenue = fields.Monetary(compute="_compute_booking_stats", store=True)
     traveller_count = fields.Integer(compute="_compute_booking_stats", store=True)
     avg_rating = fields.Float(compute="_compute_rating", store=True, aggregator="avg")
@@ -84,7 +85,7 @@ class TourismTourPackage(models.Model):
         "Capacity cannot be negative.",
     )
 
-    @api.depends("booking_ids.state", "booking_ids.amount_total", "booking_ids.group_size")
+    @api.depends("booking_ids", "booking_ids.state", "booking_ids.amount_total", "booking_ids.group_size")
     def _compute_booking_stats(self):
         for package in self:
             billable = package.booking_ids.filtered(lambda b: b.state in ("paid", "completed"))
