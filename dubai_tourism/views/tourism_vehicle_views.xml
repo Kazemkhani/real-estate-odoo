@@ -16,6 +16,9 @@
                 <field name="license_plate"/>
                 <field name="seats"/>
                 <field name="driver_id"/>
+                <field name="trips_done" optional="show"/>
+                <field name="passengers_transported" optional="show"/>
+                <field name="utilization" optional="show"/>
                 <field name="state" widget="badge"/>
             </list>
         </field>
@@ -55,6 +58,11 @@
                             <field name="driver_id"/>
                             <field name="state"/>
                             <field name="active"/>
+                        </group>
+                        <group string="Utilization">
+                            <field name="trips_done"/>
+                            <field name="passengers_transported"/>
+                            <field name="utilization"/>
                         </group>
                     </group>
                 </sheet>

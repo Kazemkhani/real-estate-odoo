@@ -3,7 +3,39 @@
     <record id="tourism_transport_assignment_action" model="ir.actions.act_window">
         <field name="name">Transport Assignments</field>
         <field name="res_model">tourism.transport.assignment</field>
-        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="view_mode">list,kanban,calendar,graph,pivot,form</field>
+    </record>
+
+    <record id="tourism_transport_utilization_action" model="ir.actions.act_window">
+        <field name="name">Fleet Utilization</field>
+        <field name="res_model">tourism.transport.assignment</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'search_default_internal': 1, 'search_default_group_vehicle': 1}</field>
+    </record>
+
+    <record id="tourism_transport_assignment_view_graph" model="ir.ui.view">
+        <field name="name">tourism.transport.assignment.graph</field>
+        <field name="model">tourism.transport.assignment</field>
+        <field name="arch" type="xml">
+            <graph string="Transport" sample="1">
+                <field name="vehicle_id"/>
+                <field name="passenger_count" type="measure"/>
+                <field name="commission_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="tourism_transport_assignment_view_pivot" model="ir.ui.view">
+        <field name="name">tourism.transport.assignment.pivot</field>
+        <field name="model">tourism.transport.assignment</field>
+        <field name="arch" type="xml">
+            <pivot string="Transport" sample="1">
+                <field name="vehicle_id" type="row"/>
+                <field name="transport_type" type="col"/>
+                <field name="passenger_count" type="measure"/>
+                <field name="commission_amount" type="measure"/>
+            </pivot>
+        </field>
     </record>
 
     <record id="tourism_transport_assignment_view_list" model="ir.ui.view">
@@ -56,6 +88,28 @@
                 <field name="booking_id"/>
                 <field name="vehicle_id"/>
             </calendar>
+        </field>
+    </record>
+
+    <record id="tourism_transport_assignment_view_search" model="ir.ui.view">
+        <field name="name">tourism.transport.assignment.search</field>
+        <field name="model">tourism.transport.assignment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="booking_id"/>
+                <field name="vehicle_id"/>
+                <field name="taxi_company_id"/>
+                <filter name="internal" string="Internal Fleet" domain="[('transport_type', '=', 'internal')]"/>
+                <filter name="external" string="Third-Party" domain="[('transport_type', '=', 'external')]"/>
+                <separator/>
+                <filter name="done" string="Completed" domain="[('state', '=', 'done')]"/>
+                <group>
+                    <filter name="group_vehicle" string="Vehicle" context="{'group_by': 'vehicle_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'transport_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
         </field>
     </record>
 

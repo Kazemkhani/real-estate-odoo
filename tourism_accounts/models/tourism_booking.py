@@ -17,29 +17,31 @@ class TourismBooking(models.Model):
 
     def _create_customer_invoice(self):
         """Create a draft customer invoice itemising adults, children and any
-        family/group discount."""
+        family/group discount, with the company's default sales tax applied."""
         self.ensure_one()
-        lines = [Command.create({
-            "name": "%s — Adults (%d)" % (self.package_id.name, self.adult_count),
-            "quantity": self.adult_count or 1,
-            "price_unit": self.package_id.price_adult,
-        })]
+        # Apply the company's default sale tax (if configured) to every line.
+        tax = self.company_id.account_sale_tax_id
+        tax_cmd = [Command.set(tax.ids)] if tax else False
+
+        def line(name, qty, price):
+            vals = {"name": name, "quantity": qty, "price_unit": price}
+            if tax_cmd:
+                vals["tax_ids"] = tax_cmd
+            return Command.create(vals)
+
+        lines = [line("%s — Adults (%d)" % (self.package_id.name, self.adult_count),
+                      self.adult_count or 1, self.package_id.effective_price_adult)]
         if self.child_count:
-            lines.append(Command.create({
-                "name": "%s — Children (%d)" % (self.package_id.name, self.child_count),
-                "quantity": self.child_count,
-                "price_unit": self.package_id.price_child,
-            }))
+            lines.append(line("%s — Children (%d)" % (self.package_id.name, self.child_count),
+                              self.child_count, self.package_id.price_child))
         if self.discount_total:
-            lines.append(Command.create({
-                "name": "Family / group discount",
-                "quantity": 1,
-                "price_unit": -self.discount_total,
-            }))
+            lines.append(line("Family / group discount", 1, -self.discount_total))
         return self.env["account.move"].create({
             "partner_id": self.customer_id.id,
             "move_type": "out_invoice",
             "invoice_origin": self.name,
+            # Bill in the booking's currency (defaults to the company currency).
+            "currency_id": (self.currency_id or self.company_id.currency_id).id,
             "invoice_line_ids": lines,
         })
 

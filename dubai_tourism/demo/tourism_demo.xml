@@ -57,6 +57,8 @@
             <field name="capacity">40</field>
             <field name="price_adult">200</field>
             <field name="price_child">100</field>
+            <field name="is_featured" eval="True"/>
+            <field name="promo_price">160</field>
             <field name="destination_ids" eval="[(6, 0, [ref('dest_marina'), ref('dest_palm')])]"/>
         </record>
         <record id="pkg_cultural" model="tourism.tour.package">

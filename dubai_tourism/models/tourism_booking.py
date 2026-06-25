@@ -100,11 +100,13 @@ class TourismBooking(models.Model):
             booking.has_young_children = booking.child_count > 0
             booking.is_group = booking.group_size >= threshold
 
-    @api.depends("adult_count", "child_count", "package_id.price_adult", "package_id.price_child")
+    @api.depends("adult_count", "child_count", "package_id.effective_price_adult",
+                 "package_id.price_child")
     def _compute_amounts(self):
         cfg = self._discount_config()
         for booking in self:
-            adults = booking.adult_count * booking.package_id.price_adult
+            # Featured packages may carry a promotional adult price.
+            adults = booking.adult_count * booking.package_id.effective_price_adult
             children = booking.child_count * booking.package_id.price_child
             subtotal = adults + children
             size = booking.adult_count + booking.child_count

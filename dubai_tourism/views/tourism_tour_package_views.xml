@@ -31,8 +31,10 @@
         <field name="arch" type="xml">
             <kanban default_group_by="category" sample="1" class="o_tourism_kanban">
                 <field name="currency_id"/>
+                <field name="is_featured"/>
                 <templates>
                     <t t-name="card" class="flex-row">
+                        <widget name="web_ribbon" title="Featured" bg_color="text-bg-warning" invisible="not is_featured"/>
                         <aside class="d-flex align-items-center me-2">
                             <field name="image" widget="image" options="{'img_class': 'object-fit-cover', 'size': [64, 64]}"/>
                         </aside>

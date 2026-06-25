@@ -43,6 +43,21 @@ class TourismTourPackage(models.Model):
     price_adult = fields.Monetary(string="Price / Adult", required=True, default=200.0)
     price_child = fields.Monetary(string="Price / Child", default=100.0)
 
+    # Marketing: featured packages can carry a promotional adult price that
+    # overrides the standard one on new bookings.
+    is_featured = fields.Boolean(string="Featured")
+    promo_price = fields.Monetary(string="Promo Price / Adult",
+                                  help="If set on a featured package, used instead of the adult price.")
+    effective_price_adult = fields.Monetary(compute="_compute_effective_price", store=True)
+
+    @api.depends("is_featured", "promo_price", "price_adult")
+    def _compute_effective_price(self):
+        for package in self:
+            if package.is_featured and package.promo_price > 0:
+                package.effective_price_adult = package.promo_price
+            else:
+                package.effective_price_adult = package.price_adult
+
     booking_ids = fields.One2many("tourism.booking", "package_id", string="Bookings")
     review_ids = fields.One2many("tourism.review", "package_id", string="Reviews")
     itinerary_line_ids = fields.One2many("tourism.itinerary.line", "package_id", string="Itinerary")

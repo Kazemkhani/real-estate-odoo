@@ -37,6 +37,15 @@ class TestTourismInvoice(AccountTestInvoicingCommon):
         # Adults line + children line + discount line
         self.assertEqual(len(booking.invoice_id.invoice_line_ids), 3)
 
+    def test_invoice_applies_default_sale_tax(self):
+        # AccountTestInvoicingCommon configures a default sale tax on the company.
+        self.env.company.account_sale_tax_id = self.company_data["default_tax_sale"]
+        booking = self._booking(adults=2)
+        booking.action_register_payment()
+        invoice = booking.invoice_id
+        self.assertTrue(invoice.invoice_line_ids.tax_ids, "Lines should carry the default sale tax")
+        self.assertGreater(invoice.amount_tax, 0.0)
+
     def test_invoice_origin_and_simple_line(self):
         booking = self._booking(adults=2)  # no children, no discount -> one line
         booking.action_register_payment()
