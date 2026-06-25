@@ -106,6 +106,20 @@ class TestReportAndSecurity(TransactionCase):
         # ...another agent does not (record rule).
         self.assertNotIn(booking, self.env["tourism.booking"].with_user(other_agent).search([]))
 
+    def test_report_measures_are_aggregatable(self):
+        """Every field used as a graph/pivot measure must be stored, or the report
+        crashes on aggregation (the Package Performance pivot 'Oops!' bug)."""
+        self.env["tourism.tour.package"]._read_group(
+            [], ["category"],
+            ["confirmed_revenue:sum", "booking_count:sum", "traveller_count:sum", "avg_rating:avg"])
+        self.env["tourism.destination"]._read_group([], [], ["booking_count:sum"])
+        self.env["tourism.transport.assignment"]._read_group(
+            [], ["transport_type"], ["passenger_count:sum", "commission_amount:sum"])
+        self.env["tourism.vehicle"]._read_group(
+            [], [], ["trips_done:sum", "passengers_transported:sum", "utilization:avg"])
+        self.env["tourism.booking"]._read_group(
+            [], ["package_id"], ["amount_total:sum", "group_size:sum"])
+
     def test_manager_sees_all(self):
         manager = new_test_user(self.env, login="mgr_audit",
                                 groups="dubai_tourism.group_tourism_manager")
