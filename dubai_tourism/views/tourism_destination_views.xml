@@ -6,6 +6,23 @@
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+    <record id="tourism_destination_popularity_action" model="ir.actions.act_window">
+        <field name="name">Destination Popularity</field>
+        <field name="res_model">tourism.destination</field>
+        <field name="view_mode">graph,list</field>
+    </record>
+
+    <record id="tourism_destination_view_graph" model="ir.ui.view">
+        <field name="name">tourism.destination.graph</field>
+        <field name="model">tourism.destination</field>
+        <field name="arch" type="xml">
+            <graph string="Destination Popularity" sample="1" type="bar">
+                <field name="name"/>
+                <field name="booking_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
     <record id="tourism_destination_view_list" model="ir.ui.view">
         <field name="name">tourism.destination.list</field>
         <field name="model">tourism.destination</field>

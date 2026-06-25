@@ -35,6 +35,10 @@
               parent="tourism_menu_reporting" action="tourism_booking_report_action" sequence="10"/>
     <menuitem id="tourism_menu_fleet_utilization" name="Fleet Utilization"
               parent="tourism_menu_reporting" action="tourism_transport_utilization_action" sequence="20"/>
+    <menuitem id="tourism_menu_package_performance" name="Package Performance"
+              parent="tourism_menu_reporting" action="tourism_package_performance_action" sequence="30"/>
+    <menuitem id="tourism_menu_destination_popularity" name="Destination Popularity"
+              parent="tourism_menu_reporting" action="tourism_destination_popularity_action" sequence="40"/>
 
     <menuitem id="tourism_menu_config" name="Configuration"
               parent="tourism_menu_root" sequence="95" groups="group_tourism_manager"/>

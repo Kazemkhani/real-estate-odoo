@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Odoo-19.0-714B67?logo=odoo&logoColor=white" alt="Odoo 19"/>
-  <img src="https://img.shields.io/badge/tests-31%20passing-success" alt="Tested"/>
+  <img src="https://img.shields.io/badge/tests-36%20passing-success" alt="Tested"/>
   <img src="https://img.shields.io/badge/validated-on%20real%20Odoo-1f9d57" alt="Validated"/>
   <img src="https://img.shields.io/badge/License-LGPL--3.0-blue" alt="License"/>
 </p>
@@ -44,7 +44,11 @@
 | **Tour guides** | guide flag on partners, assignable to departures |
 | **Email automation** | confirmation & receipt **mail templates** sent on confirm/pay (toggle in Settings) |
 | **Scheduled cleanup** | `ir.cron` cancels overdue unpaid bookings (configurable) |
-| **Accounting** | optional [`tourism_accounts`](../tourism_accounts) bridge auto-creates an itemised **customer invoice** on payment |
+| **Accounting** | optional [`tourism_accounts`](../tourism_accounts) bridge auto-creates an itemised **customer invoice** (with tax & currency) on payment |
+| **Customer portal** | logged-in customers track their bookings at **`/my/tours`** (own-records rule + HttpCase tests) |
+| **Featured packages** | `is_featured` + promotional price, kanban ribbon |
+| **Fleet utilization** | trips / passengers / avg seat-fill per vehicle + a Fleet Utilization report |
+| **Analytics suite** | Package Performance & Destination Popularity reports (graph + pivot) |
 
 ---
 

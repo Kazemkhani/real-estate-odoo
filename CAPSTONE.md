@@ -128,13 +128,16 @@ on Odoo 19. 🔜 = roadmap (see §10).
 | 19 | "Providing **suggestions**" to tourists | destinations + packages catalogue | catalogue | ✅ / 🔜 customer **portal** with suggestions |
 | 20 | Reduce manual workload | email automation (confirm/receipt), auto‑cancel cron, sequences | `data/mail_templates.xml`, `data/tourism_cron.xml` | ✅ |
 
-**Honest gaps (call these out in the presentation as "next iteration"):**
-- A **customer‑facing portal/website** for self‑service booking (the agency was
-  taking phone bookings — this is the natural next leap). → §10‑R1.
-- A dedicated **fleet‑utilization dashboard** (utilization % per vehicle/time). → §10‑R3.
-- **Featured/recommended packages** to operationalize "suggestions" & marketing. → §10‑R4.
-- **Multi‑currency & taxes** on invoices (today invoices are single‑currency,
-  untaxed drafts). → §10‑R5.
+**Roadmap delivered (all validated on Odoo 19):**
+- ✅ **Customer portal** for self‑service — logged‑in customers see their bookings at `/my/tours` (R1).
+- ✅ **Fleet utilization** — trips/passengers/avg seat‑fill per vehicle + a Fleet Utilization report (R3).
+- ✅ **Featured/recommended packages** with a promotional price (R4).
+- ✅ **Taxes & currency** on invoices via the bridge (R5).
+- ✅ **Analytics suite** — Package Performance + Destination Popularity reports (R2).
+
+**Remaining (deliberately deferred — call out as "next iteration"):**
+- **SMS/WhatsApp** confirmations (R6) — needs an IAP/SMS gateway, so it isn't
+  demoable offline; left as a toggle‑ready future item.
 
 ---
 
@@ -317,7 +320,12 @@ Goal: hit **every** requirement in ~6 minutes. Log in as admin (a Manager).
    *(Req 6, 14, 15, 17)*
 10. **Security.** Switch to an **Agent** user → they see **only their own
     bookings** (record rule). *(centralization & control)*
-11. **Voucher PDF.** Print → **Tour Voucher** on a booking. *(documentation)*
+11. **Customer self‑service portal.** Log in as a **portal customer** (or open
+    `/my`) → **Tour Bookings** card → `/my/tours` → open a booking. "No more phone
+    calls — the tourist tracks their own trip." *(the phone‑to‑digital leap)*
+12. **Reporting.** **Reporting → Package Performance / Destination Popularity /
+    Fleet Utilization** (graph + pivot). *(data‑driven marketing)*
+13. **Voucher PDF.** Print → **Tour Voucher** (now with guide + itinerary). *(documentation)*
 
 > Have the **test output** (§7) on a terminal tab as the closing slide: "every
 > rule you just saw is covered by an automated test — here's the green run."
@@ -330,39 +338,30 @@ Each item is scoped so the next AI session can pick it up and **finish + validat
 it** in one pass. Copy the prompt verbatim. **Definition of done for every item:
 loads on Odoo 19, demo data still loads, and new tests pass (`0 failed`).**
 
-### R1 — Customer Portal (self‑service booking) ⭐ highest impact
-The agency was taking phone bookings; a portal is the headline upgrade.
-> **Prompt:** "In `dubai_tourism`, add a customer **portal** (depend on
-> `portal`, `website`). Public users browse published packages
-> (`website_published` field + controller + QWeb templates), request a booking,
-> and logged‑in customers see **My Bookings** under `/my`. Reuse existing models;
-> add portal access rules; write tests for the controller routes and access. Mount
-> any new module in `deploy/`. Validate: `-i dubai_tourism --test-enable` →
-> `0 failed`, and `--without-demo=False` loads clean."
+### ✅ R1 — Customer Portal — **DONE**
+Logged‑in customers get a "Tour Bookings" card on `/my`, a `/my/tours` list and
+`/my/tours/<id>` detail, with an own‑bookings record rule and HttpCase tests.
+*Next iteration:* a public **website** storefront (depend on `website`) where
+anonymous visitors browse published packages and request a booking online.
 
-### R2 — KPI Dashboard (OWL or spreadsheet)
-> **Prompt:** "Add a **Dashboard** menu in `dubai_tourism` showing KPIs: revenue
-> MTD, bookings by state, top 5 packages, top destinations, fleet utilization,
-> commission earned. Prefer the `spreadsheet_dashboard` approach if available,
-> else an OWL client action. No regressions; validate on Odoo 19."
+### ✅ R2 — Analytics suite — **DONE (graph/pivot)**
+Package Performance (revenue/travellers/rating by category) and Destination
+Popularity reports under **Reporting**, alongside Booking Analysis & Fleet
+Utilization. *Next iteration:* a single OWL/`spreadsheet_dashboard` KPI board.
 
-### R3 — Fleet utilization analytics
-> **Prompt:** "Add a `tourism.transport.assignment` pivot/graph and a computed
-> **utilization %** per vehicle (assigned passenger‑hours vs capacity over a
-> period). Add a 'Fleet Utilization' reporting menu. Tests for the computation.
-> Validate."
+### ✅ R3 — Fleet utilization — **DONE**
+`trips_done`, `passengers_transported`, avg seat‑fill on `tourism.vehicle`;
+graph/pivot/search on transport; a **Fleet Utilization** report. Tested.
 
-### R4 — Featured/recommended packages (marketing)
-> **Prompt:** "Add `is_featured` + `promo_price` to `tourism.tour.package`, a
-> 'Featured' filter, kanban ribbon, and a booking‑time hook that applies
-> `promo_price` when set. Tests + demo. Validate."
+### ✅ R4 — Featured/recommended packages — **DONE**
+`is_featured` + `promo_price`, kanban "Featured" ribbon, promo applied to
+bookings. Tested + demo.
 
-### R5 — Multi‑currency & taxes on invoices
-> **Prompt:** "In `tourism_accounts`, set the invoice currency from the customer's
-> pricelist/company and apply a configurable default sales tax to invoice lines.
-> Extend `AccountTestInvoicingCommon` tests for tax totals. Validate."
+### ✅ R5 — Taxes & currency on invoices — **DONE**
+`tourism_accounts` applies the company default sale tax and sets invoice
+currency. Tested with `AccountTestInvoicingCommon`.
 
-### R6 — SMS/WhatsApp confirmations
+### R6 — SMS/WhatsApp confirmations *(deferred — needs IAP gateway)*
 > **Prompt:** "Behind a Settings toggle, send an SMS (depend on `sms`) on booking
 > confirmation in addition to email. Test the trigger path. Validate."
 

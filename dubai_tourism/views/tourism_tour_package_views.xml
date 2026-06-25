@@ -6,6 +6,37 @@
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+    <record id="tourism_package_performance_action" model="ir.actions.act_window">
+        <field name="name">Package Performance</field>
+        <field name="res_model">tourism.tour.package</field>
+        <field name="view_mode">graph,pivot,list</field>
+    </record>
+
+    <record id="tourism_tour_package_view_graph" model="ir.ui.view">
+        <field name="name">tourism.tour.package.graph</field>
+        <field name="model">tourism.tour.package</field>
+        <field name="arch" type="xml">
+            <graph string="Package Performance" sample="1">
+                <field name="category"/>
+                <field name="confirmed_revenue" type="measure"/>
+                <field name="traveller_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="tourism_tour_package_view_pivot" model="ir.ui.view">
+        <field name="name">tourism.tour.package.pivot</field>
+        <field name="model">tourism.tour.package</field>
+        <field name="arch" type="xml">
+            <pivot string="Package Performance" sample="1">
+                <field name="category" type="row"/>
+                <field name="confirmed_revenue" type="measure"/>
+                <field name="booking_count" type="measure"/>
+                <field name="avg_rating" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="tourism_tour_package_view_list" model="ir.ui.view">
         <field name="name">tourism.tour.package.list</field>
         <field name="model">tourism.tour.package</field>
